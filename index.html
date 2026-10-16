@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZHIE — Zynora Historical Intelligence Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+:root{
+  --ink:#15120D;--ink2:#1D1810;--stone:#241F16;--line:#3A3120;
+  --gold:#C99A56;--gold2:#8C6F44;
+  --teal:#4FA897;--teal2:#356F64;
+  --bone:#EFE7D8;--bone2:#A89B82;
+  --rust:#C0533A;--violet:#9580C8;
+  --nav-h:52px;
+  --ff-d:'Fraunces',Georgia,serif;
+  --ff-b:'IBM Plex Sans',system-ui,sans-serif;
+  --ff-m:'IBM Plex Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;background:var(--ink);}
+body{background:var(--ink);color:var(--bone);font-family:var(--ff-b);line-height:1.6;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;cursor:pointer;}input,select,textarea{font-family:inherit;}
+a{color:inherit;text-decoration:none;}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);}
+.wrap{max-width:1100px;margin:0 auto;padding:0 1.25rem;}
+.eyebrow{font-family:var(--ff-m);font-size:0.7rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);}
+.hidden{display:none!important;}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:40;height:var(--nav-h);background:rgba(21,18,13,0.96);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);display:flex;align-items:center;}
+nav .inner{width:100%;max-width:1100px;margin:0 auto;padding:0 1.25rem;display:flex;align-items:center;justify-content:space-between;gap:0.5rem;overflow:hidden;}
+.brand{font-family:var(--ff-m);font-size:0.7rem;letter-spacing:0.13em;text-transform:uppercase;color:var(--bone2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.brand strong{color:var(--bone);}
+.nav-v{font-family:var(--ff-m);font-size:0.68rem;color:var(--teal);letter-spacing:0.08em;flex-shrink:0;}
+
+/* HERO */
+.hero{padding:3rem 0 2rem;border-bottom:1px solid var(--line);}
+.hero h1{font-family:var(--ff-d);font-weight:700;font-size:clamp(1.75rem,5vw,3.6rem);line-height:1.07;letter-spacing:-0.015em;color:var(--bone);max-width:680px;}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--gold);}
+.hero .tagline{margin-top:0.8rem;font-family:var(--ff-m);font-size:0.72rem;letter-spacing:0.08em;color:var(--teal);text-transform:uppercase;}
+.hero .sub{margin-top:0.9rem;max-width:480px;color:var(--bone2);font-size:0.95rem;line-height:1.65;}
+.hero-cta{display:inline-block;margin-top:1.5rem;padding:0.75rem 1.4rem;background:var(--teal);color:var(--ink);font-family:var(--ff-b);font-weight:600;font-size:0.88rem;border-radius:4px;border:none;transition:background 0.14s;}
+.hero-cta:hover{background:#62c2af;}.hero-cta:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+
+/* STATS BAR */
+.stats-bar{display:flex;gap:2rem;flex-wrap:wrap;margin-top:1.8rem;padding-top:1.4rem;border-top:1px solid var(--line);}
+.stat{display:flex;flex-direction:column;gap:0.08rem;}
+.stat-n{font-family:var(--ff-d);font-size:1.55rem;font-weight:700;color:var(--gold);line-height:1;}
+.stat-l{font-family:var(--ff-m);font-size:0.61rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--bone2);}
+
+/* STRIP */
+.sig-strip{position:relative;height:44px;overflow:hidden;background:var(--ink2);border-bottom:1px solid var(--line);}
+.sig-glyphs{position:absolute;inset:0;background-image:repeating-linear-gradient(112deg,var(--gold) 0 2.5px,transparent 2.5px 15px);-webkit-mask-image:linear-gradient(to right,black 0%,black 46%,transparent 72%);mask-image:linear-gradient(to right,black 0%,black 46%,transparent 72%);opacity:0.72;}
+.sig-bin{position:absolute;inset:0;display:flex;align-items:center;padding-left:1.5rem;font-family:var(--ff-m);color:var(--teal);font-size:0.78rem;letter-spacing:0.2em;-webkit-mask-image:linear-gradient(to right,transparent 28%,black 52%,black 100%);mask-image:linear-gradient(to right,transparent 28%,black 52%,black 100%);opacity:0.78;white-space:nowrap;overflow:hidden;}
+@media(prefers-reduced-motion:no-preference){.sig-glyphs{animation:drift 22s linear infinite;}}
+@keyframes drift{from{background-position:0 0;}to{background-position:500px 0;}}
+
+/* TABS */
+.mod-tabs{position:sticky;top:var(--nav-h);z-index:30;background:rgba(21,18,13,0.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+.tabs-row{display:flex;overflow-x:auto;scrollbar-width:none;max-width:1100px;margin:0 auto;padding:0 1rem;}
+.tabs-row::-webkit-scrollbar{display:none;}
+.tab-btn{flex-shrink:0;background:none;border:none;color:var(--bone2);font-family:var(--ff-m);font-size:0.67rem;letter-spacing:0.07em;text-transform:uppercase;padding:0.78rem 0.95rem;border-bottom:2px solid transparent;transition:color 0.13s,border-color 0.13s;white-space:nowrap;}
+.tab-btn:hover{color:var(--bone);}.tab-btn.active{color:var(--gold);border-bottom-color:var(--gold);}
+.tab-btn:focus-visible{outline:2px solid var(--teal);outline-offset:-2px;}
+.tab-ct{display:inline-flex;align-items:center;justify-content:center;background:var(--teal2);color:var(--bone);border-radius:20px;font-size:0.58rem;padding:0 0.38rem;margin-left:0.3rem;min-width:1em;height:1em;vertical-align:middle;}
+
+/* MODULE */
+.mod-panel{padding:2.2rem 0 2.8rem;}
+.sec-head{margin-bottom:1.4rem;}
+.sec-head h2{font-family:var(--ff-d);font-size:clamp(1.4rem,3.8vw,1.9rem);margin-top:0.3rem;color:var(--bone);}
+.sec-head p{color:var(--bone2);max-width:480px;margin-top:0.4rem;font-size:0.91rem;}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:1rem;}
+.search-ico{position:absolute;left:0.75rem;top:50%;transform:translateY(-50%);color:var(--bone2);font-size:0.85rem;pointer-events:none;}
+.search-input{width:100%;background:var(--stone);border:1px solid var(--line);border-radius:4px;padding:0.65rem 0.9rem 0.65rem 2.2rem;color:var(--bone);font-size:0.9rem;}
+.search-input::placeholder{color:var(--bone2);}
+.search-input:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+
+/* CIV GRID */
+.civ-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:0.7rem;margin-bottom:1.4rem;}
+.civ-card{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:1rem;cursor:pointer;text-align:left;color:inherit;transition:border-color 0.13s,transform 0.13s;display:flex;flex-direction:column;}
+.civ-card:hover{border-color:var(--gold2);transform:translateY(-2px);}
+.civ-card.active{border-color:var(--teal);box-shadow:0 0 0 1px var(--teal2);}
+.civ-card:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.ctag{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--bone2);}
+.ctag.is-pre{color:var(--teal);}.ctag.is-done{color:var(--violet);}
+.civ-card h3{font-family:var(--ff-d);font-size:1.05rem;margin-top:0.32rem;color:var(--bone);}
+.civ-card .c-era{font-family:var(--ff-m);font-size:0.63rem;color:var(--gold);margin-top:0.08rem;}
+.civ-card .c-teaser{font-size:0.82rem;color:var(--bone2);margin-top:0.45rem;flex:1;line-height:1.5;}
+
+/* DECODE FORM */
+.decode-form{display:flex;gap:0.55rem;flex-wrap:wrap;}
+.decode-form input{flex:1;min-width:0;background:var(--stone);border:1px solid var(--line);border-radius:4px;padding:0.7rem 0.9rem;color:var(--bone);font-size:0.9rem;}
+.decode-form input::placeholder{color:var(--bone2);}
+.decode-form input:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.btn-gold{background:var(--gold);color:var(--ink);border:none;border-radius:4px;padding:0.7rem 1.1rem;font-weight:600;font-size:0.88rem;white-space:nowrap;transition:background 0.13s;}
+.btn-gold:hover{background:#dcae6c;}.btn-gold:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-gold:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.btn-teal{background:var(--teal);color:var(--ink);border:none;border-radius:4px;padding:0.72rem 1.4rem;font-weight:600;font-size:0.88rem;white-space:nowrap;transition:background 0.13s;}
+.btn-teal:hover{background:#62c2af;}.btn-teal:disabled{opacity:0.4;cursor:not-allowed;}
+.btn-teal:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
+
+/* REPORT */
+#report-panel{margin-top:2rem;display:none;}
+#report-panel.open{display:block;}
+.rpt-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:0.7rem;margin-bottom:1.1rem;}
+.rpt-head-left .r-era{font-family:var(--ff-m);color:var(--gold);font-size:0.76rem;}
+.rpt-head-left h2{font-family:var(--ff-d);font-size:clamp(1.5rem,4vw,2.1rem);margin-top:0.1rem;}
+.btn-copy{background:transparent;border:1px solid var(--line);border-radius:4px;color:var(--bone2);font-family:var(--ff-m);font-size:0.66rem;letter-spacing:0.04em;padding:0.48rem 0.85rem;white-space:nowrap;flex-shrink:0;transition:border-color 0.13s,color 0.13s;}
+.btn-copy:hover{border-color:var(--gold2);color:var(--bone);}.btn-copy.ok{border-color:var(--teal);color:var(--teal);}
+
+/* STRIP SMALL */
+.strip-sm{position:relative;height:24px;background:var(--ink2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;margin:1.1rem 0;}
+.strip-sm .sg{position:absolute;inset:0;background-image:repeating-linear-gradient(112deg,var(--gold) 0 2px,transparent 2px 13px);-webkit-mask-image:linear-gradient(to right,black 0%,black 44%,transparent 68%);mask-image:linear-gradient(to right,black 0%,black 44%,transparent 68%);opacity:0.62;}
+.strip-sm .sb{position:absolute;inset:0;display:flex;align-items:center;padding-left:0.9rem;font-family:var(--ff-m);font-size:0.68rem;color:var(--teal);letter-spacing:0.18em;-webkit-mask-image:linear-gradient(to right,transparent 30%,black 52%,black 100%);mask-image:linear-gradient(to right,transparent 30%,black 52%,black 100%);opacity:0.72;white-space:nowrap;overflow:hidden;}
+
+/* PROGRESS */
+.prog-wrap{margin:1.2rem 0;}
+.prog-label{font-family:var(--ff-m);font-size:0.74rem;color:var(--bone2);margin-bottom:0.4rem;}
+.prog-track{height:2px;background:var(--line);border-radius:2px;overflow:hidden;}
+.prog-bar{height:100%;background:var(--teal);width:0%;border-radius:2px;}
+.prog-bar.go{animation:prog 4s ease-out forwards;}
+@keyframes prog{0%{width:5%;}55%{width:72%;}100%{width:90%;};}
+.prog-steps{display:flex;flex-wrap:wrap;gap:0.5rem 1rem;margin-top:0.55rem;}
+.ps{font-family:var(--ff-m);font-size:0.63rem;letter-spacing:0.04em;color:var(--line);transition:color 0.28s;}
+.ps.on{color:var(--bone2);}.ps.done{color:var(--teal);}
+
+/* FRAGS */
+.frags{display:grid;grid-template-columns:1fr;gap:0.75rem;margin-top:1.4rem;}
+@media(min-width:620px){.frags{grid-template-columns:1fr 1fr;}}
+.frag{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:1.1rem 1.2rem;opacity:0;transform:translateY(7px);animation:rise 0.4s ease-out forwards;}
+.frag.span2{grid-column:1/-1;}
+@keyframes rise{from{opacity:0;transform:translateY(7px);}to{opacity:1;transform:none;}}
+.fnum{font-family:var(--ff-m);color:var(--teal);font-size:0.62rem;letter-spacing:0.1em;}
+.frag h4{font-family:var(--ff-d);font-size:1rem;margin-top:0.26rem;color:var(--bone);}
+.frag p{margin-top:0.42rem;color:var(--bone2);font-size:0.86rem;line-height:1.62;}
+.innov-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,185px),1fr));gap:0.6rem;margin-top:0.65rem;}
+.innov-card{background:var(--ink2);border:1px solid var(--line);border-radius:5px;padding:0.75rem;}
+.innov-name{font-family:var(--ff-m);color:var(--gold);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.04em;}
+.innov-card p{margin-top:0.32rem;font-size:0.81rem;color:var(--bone2);line-height:1.54;}
+.err-msg{font-family:var(--ff-m);font-size:0.8rem;color:var(--rust);margin-top:1.1rem;}
+.btn-retry{margin-left:0.55rem;background:transparent;border:1px solid var(--rust);color:var(--rust);border-radius:4px;padding:0.22rem 0.6rem;font-family:var(--ff-m);font-size:0.7rem;transition:background 0.13s;}
+.btn-retry:hover{background:rgba(192,83,58,0.1);}
+
+/* TOAST */
+#toast-wrap{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:0.4rem;pointer-events:none;width:calc(100% - 2rem);max-width:320px;}
+.toast{font-family:var(--ff-m);font-size:0.72rem;padding:0.52rem 1rem;border-radius:20px;background:var(--stone);border:1px solid var(--teal2);color:var(--teal);white-space:nowrap;opacity:0;animation:t-in 0.2s ease-out forwards,t-out 0.2s ease-in 2s forwards;}
+@keyframes t-in{to{opacity:1;transform:none;}}
+@keyframes t-out{to{opacity:0;transform:translateY(-4px);}}
+
+/* TECH ANALYZER */
+.chip-group{display:flex;flex-wrap:wrap;gap:0.45rem;margin:1.1rem 0 1.3rem;}
+.chip{background:var(--stone);border:1px solid var(--line);border-radius:20px;padding:0.44rem 0.88rem;font-family:var(--ff-m);font-size:0.7rem;letter-spacing:0.05em;color:var(--bone2);cursor:pointer;transition:all 0.12s;}
+.chip:hover{border-color:var(--gold2);color:var(--bone);}
+.chip.sel{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600;}
+.chip:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+#tech-out{display:none;margin-top:1.8rem;}#tech-out.open{display:block;}
+.tech-title{font-family:var(--ff-d);font-size:1.6rem;margin-top:0.28rem;color:var(--bone);}
+.compare-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:0.7rem;margin-top:1.2rem;}
+.cc-card{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:1rem;}
+.cc-name{font-family:var(--ff-d);font-size:0.98rem;color:var(--bone);}
+.cc-era{font-family:var(--ff-m);font-size:0.62rem;color:var(--gold);margin-top:0.07rem;}
+.cc-approach{margin-top:0.45rem;font-size:0.82rem;color:var(--bone2);line-height:1.57;}
+.badge{display:inline-block;margin-top:0.5rem;font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.06em;text-transform:uppercase;border-radius:3px;padding:0.16rem 0.48rem;}
+.b-ok{background:rgba(79,168,151,0.14);color:var(--teal);}
+.b-fail{background:rgba(192,83,58,0.14);color:#e08070;}
+.b-mix{background:rgba(201,154,86,0.11);color:var(--gold);}
+.synth-box{background:var(--stone);border:1px solid var(--line);border-left:3px solid var(--teal);border-radius:6px;padding:1.1rem 1.2rem;margin-top:1.1rem;}
+.synth-label{font-family:var(--ff-m);color:var(--teal);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;}
+.synth-title{font-family:var(--ff-d);font-size:1.05rem;margin-top:0.26rem;color:var(--bone);}
+.synth-desc{margin-top:0.45rem;color:var(--bone2);font-size:0.86rem;line-height:1.6;}
+.feat-row{display:flex;flex-wrap:wrap;gap:0.42rem;margin-top:0.7rem;}
+.feat{font-family:var(--ff-m);font-size:0.66rem;background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:0.22rem 0.55rem;color:var(--bone2);}
+
+/* CITY DESIGNER */
+.city-form{display:grid;grid-template-columns:1fr;gap:0.8rem;margin-top:1.4rem;}
+@media(min-width:560px){.city-form{grid-template-columns:1fr 1fr;}}
+.city-form .sp2{grid-column:1/-1;}
+.fg{display:flex;flex-direction:column;gap:0.35rem;}
+.fg label{font-family:var(--ff-m);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--bone2);}
+.fg textarea,.fg select,.fg input[type="text"]{background:var(--stone);border:1px solid var(--line);border-radius:4px;padding:0.68rem 0.88rem;color:var(--bone);font-size:0.9rem;width:100%;}
+.fg textarea{min-height:82px;resize:vertical;}
+.fg textarea::placeholder,.fg input::placeholder{color:var(--bone2);}
+.fg select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23A89B82' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:calc(100% - 0.8rem) center;padding-right:2.1rem;}
+.fg textarea:focus-visible,.fg select:focus-visible,.fg input:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+#city-out{display:none;margin-top:1.8rem;}#city-out.open{display:block;}
+.city-banner{background:linear-gradient(135deg,var(--ink2) 0%,var(--stone) 100%);border:1px solid var(--line);border-radius:8px;padding:1.6rem 1.4rem 1.4rem;}
+.city-name{font-family:var(--ff-d);font-size:clamp(1.5rem,4vw,2.1rem);color:var(--bone);}
+.city-concept{margin-top:0.5rem;color:var(--bone2);font-size:0.91rem;max-width:560px;line-height:1.64;}
+.city-inspo{margin-top:0.85rem;font-family:var(--ff-m);font-size:0.71rem;color:var(--teal);letter-spacing:0.03em;line-height:1.55;}
+.district-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:0.7rem;margin-top:1.3rem;}
+.district-card{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:1rem;}
+.dc-label{font-family:var(--ff-m);color:var(--gold);font-size:0.67rem;text-transform:uppercase;letter-spacing:0.05em;}
+.dc-name{font-family:var(--ff-d);font-size:0.98rem;margin-top:0.26rem;color:var(--bone);}
+.dc-fn{margin-top:0.38rem;font-size:0.81rem;color:var(--bone2);line-height:1.54;}
+.dc-ai{margin-top:0.48rem;font-size:0.78rem;color:var(--teal2);font-style:italic;line-height:1.5;}
+.city-sig{margin-top:1.1rem;background:rgba(79,168,151,0.07);border:1px solid var(--teal2);border-radius:6px;padding:0.95rem 1.1rem;}
+.city-sig-label{font-family:var(--ff-m);color:var(--teal);font-size:0.64rem;letter-spacing:0.08em;text-transform:uppercase;}
+.city-sig p{margin-top:0.35rem;color:var(--bone2);font-size:0.85rem;line-height:1.6;}
+
+/* SUSTAINABILITY ENGINE */
+#sust-out{display:none;margin-top:1.8rem;}#sust-out.open{display:block;}
+.hist-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:0.7rem;margin-top:1.2rem;}
+.hist-card{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:1rem;}
+.hc-name{font-family:var(--ff-d);font-size:0.98rem;color:var(--bone);}
+.hc-era{font-family:var(--ff-m);font-size:0.62rem;color:var(--gold);margin-top:0.07rem;}
+.hc-approach{margin-top:0.45rem;font-size:0.82rem;color:var(--bone2);line-height:1.57;}
+.hc-lesson{margin-top:0.5rem;font-family:var(--ff-m);font-size:0.68rem;color:var(--teal);line-height:1.5;}
+.sol-comps{display:flex;flex-wrap:wrap;gap:0.42rem;margin-top:0.7rem;}
+.sol-comp{font-family:var(--ff-m);font-size:0.67rem;background:rgba(79,168,151,0.1);border:1px solid var(--teal2);border-radius:3px;padding:0.22rem 0.55rem;color:var(--teal);}
+.impl-box{margin-top:0.8rem;padding:0.85rem 0.95rem;background:var(--ink2);border:1px solid var(--line);border-radius:5px;font-size:0.84rem;color:var(--bone2);line-height:1.62;}
+
+/* BUSINESS EXTRACTOR */
+#biz-out{display:none;margin-top:1.8rem;}#biz-out.open{display:block;}
+.biz-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr));gap:0.8rem;margin-top:1.3rem;}
+.biz-card{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:1.1rem;}
+.biz-name{font-family:var(--ff-d);font-size:1.05rem;color:var(--bone);}
+.biz-tag{font-family:var(--ff-m);font-size:0.7rem;color:var(--teal);margin-top:0.15rem;}
+.biz-sec{margin-top:0.6rem;}
+.biz-lbl{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--bone2);margin-bottom:0.18rem;}
+.biz-txt{font-size:0.82rem;color:var(--bone2);line-height:1.54;}
+.africa-pill{display:inline-block;margin-top:0.55rem;font-family:var(--ff-m);font-size:0.64rem;background:rgba(201,154,86,0.11);border:1px solid var(--gold2);border-radius:3px;padding:0.18rem 0.52rem;color:var(--gold);}
+
+/* ARCHIVE */
+.arc-empty{text-align:center;padding:3rem 1rem;color:var(--bone2);}
+.arc-icon{font-size:2rem;opacity:0.32;margin-bottom:0.8rem;}
+.arc-empty h3{font-family:var(--ff-d);font-size:1.25rem;color:var(--bone);opacity:0.5;}
+.arc-empty p{margin-top:0.45rem;font-size:0.86rem;max-width:320px;margin-left:auto;margin-right:auto;}
+.arc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:0.7rem;margin-top:1.4rem;}
+.arc-card{background:var(--stone);border:1px solid var(--teal2);border-radius:6px;padding:1rem;cursor:pointer;text-align:left;color:inherit;transition:border-color 0.13s,transform 0.13s;}
+.arc-card:hover{border-color:var(--teal);transform:translateY(-2px);}
+.arc-card:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.arc-type{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--violet);}
+.arc-card h3{font-family:var(--ff-d);font-size:1.05rem;margin-top:0.32rem;color:var(--bone);}
+.arc-era{font-family:var(--ff-m);font-size:0.63rem;color:var(--gold);margin-top:0.07rem;}
+.arc-date{font-family:var(--ff-m);font-size:0.6rem;color:var(--bone2);margin-top:0.5rem;}
+.arc-action{font-family:var(--ff-m);font-size:0.66rem;color:var(--teal);margin-top:0.35rem;}
+
+/* FOOTER */
+footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
+.foot-inner{display:flex;flex-direction:column;gap:1.4rem;}
+@media(min-width:600px){.foot-inner{flex-direction:row;justify-content:space-between;align-items:flex-start;gap:2rem;}}
+.foot-brand{font-family:var(--ff-m);font-size:0.76rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--bone);margin-bottom:0.38rem;}
+.foot-sub{font-family:var(--ff-m);font-size:0.65rem;color:var(--bone2);line-height:1.7;max-width:340px;opacity:0.75;}
+.roadmap h4{font-family:var(--ff-m);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.65rem;}
+.roadmap-tags{line-height:1.9;}
+.roadmap-tags span{display:inline-block;font-family:var(--ff-m);font-size:0.63rem;letter-spacing:0.04em;color:var(--bone2);border:1px solid var(--line);border-radius:12px;padding:0.25rem 0.6rem;margin:0 0.35rem 0.35rem 0;white-space:nowrap;}
+
+/* SCROLL TOP */
+#go-top{position:fixed;bottom:1.4rem;right:1.2rem;z-index:50;width:2.3rem;height:2.3rem;border-radius:50%;background:var(--stone);border:1px solid var(--line);color:var(--bone2);font-size:1rem;display:none;align-items:center;justify-content:center;transition:background 0.13s,color 0.13s;}
+#go-top.show{display:flex;}#go-top:hover{background:var(--teal);color:var(--ink);border-color:var(--teal);}
+
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important;}html{scroll-behavior:auto;}}
+
+
+/* ===== EDUCATION LAB ===== */
+#edu-out{display:none;margin-top:1.8rem;}#edu-out.open{display:block;}
+.lesson-plan-box{background:var(--stone);border:1px solid var(--line);border-radius:8px;padding:1.3rem 1.4rem;margin-top:1.2rem;}
+.lp-title{font-family:var(--ff-d);font-size:1.3rem;color:var(--bone);}
+.lp-overview{margin-top:0.42rem;color:var(--bone2);font-size:0.86rem;line-height:1.62;}
+.phases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:0.7rem;margin-top:0.9rem;}
+.phase-card{background:var(--ink2);border:1px solid var(--line);border-radius:6px;padding:0.88rem;}
+.phase-num{font-family:var(--ff-m);color:var(--teal);font-size:0.58rem;letter-spacing:0.1em;text-transform:uppercase;}
+.phase-name{font-family:var(--ff-d);font-size:0.95rem;margin-top:0.2rem;color:var(--bone);}
+.phase-dur{font-family:var(--ff-m);font-size:0.6rem;color:var(--gold);margin-top:0.06rem;}
+.phase-act{margin-top:0.4rem;font-size:0.81rem;color:var(--bone2);line-height:1.54;}
+.phase-ai{margin-top:0.42rem;font-family:var(--ff-m);font-size:0.66rem;color:var(--teal2);font-style:italic;line-height:1.44;}
+.lp-assess{margin-top:0.85rem;padding-top:0.85rem;border-top:1px solid var(--line);font-size:0.84rem;color:var(--bone2);line-height:1.62;}
+.lp-assess-lbl{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);margin-bottom:0.25rem;}
+.africa-box{background:rgba(201,154,86,0.07);border:1px solid var(--gold2);border-radius:6px;padding:0.88rem 1rem;margin-top:0.88rem;}
+.africa-box-lbl{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);}
+.africa-box p{margin-top:0.3rem;font-size:0.83rem;color:var(--bone2);line-height:1.6;}
+
+/* ===== MULTI-CIV COMPARE ===== */
+#cmp-out{display:none;margin-top:1.8rem;}#cmp-out.open{display:block;}
+.cmp-vs-bar{display:flex;align-items:center;justify-content:space-between;gap:0.6rem;margin:1.1rem 0 0.7rem;flex-wrap:wrap;}
+.cmp-civ-badge{font-family:var(--ff-d);font-size:1.15rem;color:var(--bone);padding:0.35rem 0;}
+.cmp-badge-c1{border-bottom:3px solid var(--teal);}
+.cmp-badge-c2{border-bottom:3px solid var(--gold);text-align:right;}
+.cmp-vs-dot{font-family:var(--ff-m);font-size:0.74rem;color:var(--bone2);flex-shrink:0;}
+.dim-cards{display:flex;flex-direction:column;gap:0.65rem;margin-top:0.3rem;}
+.dim-card{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:0.95rem 1.05rem;}
+.dim-name-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.6rem;}
+.dim-name{font-family:var(--ff-m);font-size:0.65rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+.dim-winner-badge{font-family:var(--ff-m);font-size:0.58rem;padding:0.13rem 0.48rem;border-radius:3px;}
+.dw-c1{background:rgba(79,168,151,0.14);color:var(--teal);}
+.dw-c2{background:rgba(201,154,86,0.14);color:var(--gold);}
+.dw-tie{background:rgba(149,128,200,0.14);color:var(--violet);}
+.dim-sides{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+.dim-side-lbl{font-family:var(--ff-m);font-size:0.58rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--bone2);margin-bottom:0.2rem;}
+.dim-side-txt{font-size:0.81rem;color:var(--bone2);line-height:1.54;}
+.dim-lesson-row{margin-top:0.6rem;padding-top:0.55rem;border-top:1px solid var(--line);font-family:var(--ff-m);font-size:0.68rem;color:var(--teal);line-height:1.5;}
+
+/* ===== RESEARCH BRIEF ===== */
+#res-out{display:none;margin-top:1.8rem;}#res-out.open{display:block;}
+.research-doc{background:var(--stone);border:1px solid var(--line);border-radius:8px;padding:1.4rem 1.5rem;}
+@media(max-width:480px){.research-doc{padding:1rem 1.05rem;}}
+.rdoc-eyebrow{font-family:var(--ff-m);font-size:0.62rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--teal);margin-bottom:0.32rem;}
+.rdoc-title{font-family:var(--ff-d);font-size:clamp(1.15rem,3.5vw,1.55rem);color:var(--bone);border-bottom:1px solid var(--line);padding-bottom:0.85rem;margin-bottom:1rem;line-height:1.25;}
+.rdoc-sec{margin-bottom:0.95rem;}
+.rdoc-lbl{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.25rem;}
+.rdoc-txt{font-size:0.85rem;color:var(--bone2);line-height:1.67;}
+.rq-list{list-style:none;display:flex;flex-direction:column;gap:0.28rem;}
+.rq-list li{font-size:0.83rem;color:var(--bone2);padding-left:1.05rem;position:relative;line-height:1.54;}
+.rq-list li::before{content:"?";position:absolute;left:0;font-family:var(--ff-m);color:var(--gold);font-size:0.68rem;top:0.12rem;}
+.rdoc-footer{margin-top:1rem;padding-top:0.85rem;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.45rem;}
+.rdoc-meta{font-family:var(--ff-m);font-size:0.6rem;color:var(--bone2);opacity:0.65;}
+.btn-copy-doc{background:transparent;border:1px solid var(--line);border-radius:4px;color:var(--bone2);font-family:var(--ff-m);font-size:0.63rem;padding:0.4rem 0.78rem;cursor:pointer;transition:border-color 0.13s,color 0.13s;}
+.btn-copy-doc:hover{border-color:var(--teal);color:var(--teal);}
+
+/* ===== TIMELINE ===== */
+.tl-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:0.6rem;margin-top:1.3rem;}
+.tl-canvas{min-width:720px;position:relative;}
+.tl-axis{position:relative;height:1.5rem;margin-bottom:0.45rem;}
+.tl-axis span{position:absolute;font-family:var(--ff-m);font-size:0.58rem;color:var(--bone2);transform:translateX(-50%);letter-spacing:0.03em;}
+.tl-body{position:relative;background:var(--ink2);border:1px solid var(--line);border-radius:6px;overflow:hidden;}
+.tl-vline{position:absolute;top:0;bottom:0;width:1px;background:var(--line);opacity:0.5;}
+.civ-bar{position:absolute;height:22px;border-radius:3px;cursor:pointer;display:flex;align-items:center;padding:0 0.42rem;overflow:hidden;transition:filter 0.12s,transform 0.12s;min-width:3px;border:none;}
+.civ-bar:hover{filter:brightness(1.3);transform:scaleY(1.1);z-index:5;}
+.civ-bar:focus-visible{outline:2px solid white;outline-offset:1px;z-index:6;}
+.civ-bar-lbl{font-family:var(--ff-m);font-size:0.53rem;color:rgba(255,255,255,0.92);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0.02em;}
+.tl-legend{display:flex;flex-wrap:wrap;gap:0.45rem 1rem;margin-top:0.9rem;}
+.tl-leg{display:flex;align-items:center;gap:0.3rem;font-family:var(--ff-m);font-size:0.62rem;color:var(--bone2);}
+.tl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+.tl-hint{font-family:var(--ff-m);font-size:0.66rem;color:var(--bone2);opacity:0.6;margin-top:0.5rem;}
+
+
+/* ===== LIGHT MODE ===== */
+[data-theme="light"]{--ink:#F8F4ED;--ink2:#EFE9DF;--stone:#E4DCCB;--line:#CEC4B2;--bone:#1C1710;--bone2:#5C503C;}
+[data-theme="light"] nav{background:rgba(248,244,237,0.97);}
+[data-theme="light"] .mod-tabs{background:rgba(248,244,237,0.98);}
+[data-theme="light"] .sig-strip,[data-theme="light"] .strip-sm{background:var(--ink2);}
+[data-theme="light"] #toast-wrap .toast{background:var(--stone);border-color:var(--teal2);}
+
+/* ===== NAV CONTROLS ===== */
+.nav-controls{display:flex;align-items:center;gap:0.35rem;flex-shrink:0;}
+.nav-icon-btn{background:transparent;border:1px solid var(--line);border-radius:4px;color:var(--bone2);font-family:var(--ff-m);font-size:0.62rem;padding:0.24rem 0.48rem;cursor:pointer;letter-spacing:0.04em;transition:all 0.13s;line-height:1;}
+.nav-icon-btn:hover{border-color:var(--teal);color:var(--bone);}
+.nav-icon-btn:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+
+/* ===== SHARE ROW ===== */
+.share-row{display:none;flex-wrap:wrap;gap:0.38rem;align-items:center;margin-bottom:0.85rem;padding:0.6rem 0.85rem;background:var(--stone);border:1px solid var(--line);border-radius:5px;}
+.share-row.on{display:flex;}
+.share-lbl{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--bone2);flex-shrink:0;margin-right:0.1rem;}
+.share-btn{font-family:var(--ff-m);font-size:0.66rem;padding:0.26rem 0.65rem;border-radius:3px;border:none;cursor:pointer;opacity:0.92;transition:opacity 0.12s;}
+.share-btn:hover{opacity:1;}
+.s-wa{background:#25D366;color:#fff;}
+.s-tw{background:#111;color:#fff;}
+.s-li{background:#0077B5;color:#fff;}
+
+/* ===== PITCH GENERATOR ===== */
+#pitch-out{display:none;margin-top:1.8rem;}#pitch-out.open{display:block;}
+.pitch-banner{background:linear-gradient(135deg,var(--ink2) 0%,var(--stone) 100%);border:1px solid var(--line);border-radius:8px;padding:1.55rem 1.4rem 1.35rem;}
+.pitch-co{font-family:var(--ff-d);font-size:clamp(1.55rem,4.5vw,2.3rem);color:var(--bone);line-height:1.06;}
+.pitch-tl{font-family:var(--ff-m);font-size:0.76rem;color:var(--teal);margin-top:0.3rem;letter-spacing:0.03em;}
+.pitch-inspo{margin-top:0.85rem;font-family:var(--ff-m);font-size:0.7rem;color:var(--gold);line-height:1.5;}
+.pitch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,225px),1fr));gap:0.72rem;margin-top:1.25rem;}
+.pitch-card{background:var(--stone);border:1px solid var(--line);border-radius:6px;padding:0.95rem 1.05rem;}
+.pc-lbl{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);margin-bottom:0.25rem;}
+.pc-txt{font-size:0.82rem;color:var(--bone2);line-height:1.58;}
+.mvp-list{list-style:none;display:flex;flex-direction:column;gap:0.25rem;}
+.mvp-list li{font-size:0.81rem;color:var(--bone2);padding-left:0.95rem;position:relative;line-height:1.48;}
+.mvp-list li::before{content:"\2192";position:absolute;left:0;font-family:var(--ff-m);color:var(--teal);font-size:0.7rem;top:0.1rem;}
+.pitch-af{background:rgba(201,154,86,0.08);border:1px solid var(--gold2);border-left:3px solid var(--gold);border-radius:6px;padding:0.88rem 1rem;margin-top:0.88rem;}
+.pitch-af-lbl{font-family:var(--ff-m);font-size:0.6rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--gold);margin-bottom:0.26rem;}
+.pitch-af-txt{font-size:0.82rem;color:var(--bone2);line-height:1.58;}
+
+/* ===== HERITAGE VAULT ===== */
+#her-out{display:none;margin-top:1.8rem;}#her-out.open{display:block;}
+.her-banner{background:linear-gradient(135deg,var(--ink2) 0%,var(--stone) 100%);border:1px solid var(--line);border-radius:8px;padding:1.5rem 1.4rem 1.3rem;}
+.her-pname{font-family:var(--ff-d);font-size:clamp(1.35rem,4vw,1.95rem);color:var(--bone);}
+.her-region{font-family:var(--ff-m);font-size:0.72rem;color:var(--gold);margin-top:0.18rem;}
+.her-est{font-family:var(--ff-m);font-size:0.67rem;color:var(--bone2);margin-top:0.07rem;}
+.risk-pill{display:inline-flex;align-items:center;gap:0.48rem;border-radius:4px;padding:0.5rem 0.85rem;margin-top:0.85rem;}
+.risk-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.risk-lbl{font-family:var(--ff-m);font-size:0.66rem;letter-spacing:0.08em;text-transform:uppercase;}
+.rl-critical{background:rgba(192,83,58,0.14);border:1px solid var(--rust);}
+.rl-critical .risk-dot{background:var(--rust);}.rl-critical .risk-lbl{color:var(--rust);}
+.rl-endangered{background:rgba(201,154,86,0.14);border:1px solid var(--gold2);}
+.rl-endangered .risk-dot{background:var(--gold);}.rl-endangered .risk-lbl{color:var(--gold);}
+.rl-vulnerable{background:rgba(91,141,184,0.14);border:1px solid #5B8DB8;}
+.rl-vulnerable .risk-dot{background:#5B8DB8;}.rl-vulnerable .risk-lbl{color:#5B8DB8;}
+.rl-stable{background:rgba(79,168,151,0.14);border:1px solid var(--teal2);}
+.rl-stable .risk-dot{background:var(--teal);}.rl-stable .risk-lbl{color:var(--teal);}
+.ai-tools-row{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.65rem;}
+.ai-tool-chip{font-family:var(--ff-m);font-size:0.66rem;background:rgba(79,168,151,0.09);border:1px solid var(--teal2);border-radius:3px;padding:0.2rem 0.55rem;color:var(--teal);}
+.sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,195px),1fr));gap:0.62rem;margin-top:0.8rem;}
+.sim-card{background:var(--stone);border:1px solid var(--line);border-radius:5px;padding:0.82rem;}
+.sim-civ{font-family:var(--ff-d);font-size:0.92rem;color:var(--bone);}
+.sim-pr{font-family:var(--ff-m);font-size:0.65rem;color:var(--gold);margin-top:0.08rem;}
+.sim-lesson{margin-top:0.38rem;font-size:0.79rem;color:var(--bone2);line-height:1.5;}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="inner">
+    <div class="brand"><strong>ZYNORA</strong> &middot; HISTORICAL INTELLIGENCE ENGINE</div>
+    <div class="nav-controls">
+      <button class="nav-icon-btn" id="lang-btn" title="Language / Langue">EN</button>
+      <button class="nav-icon-btn" id="theme-btn" aria-label="Toggle theme">&#9788;</button>
+      <div class="nav-v">v3</div>
+    </div>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <h1>Every ancient civilization<br>already solved <em>this</em> problem once.</h1>
+    <p class="tagline">Transforming the wisdom of ancient civilizations into the innovations of tomorrow</p>
+    <p class="sub">Decode any civilization. Analyze ancient engineering across domains. Design AI-powered smart cities. Extract business ideas from history.</p>
+    <a href="#mod-tabs" class="hero-cta">Begin excavation &darr;</a>
+    <div class="stats-bar">
+      <div class="stat"><span class="stat-n" id="stat-civs">15</span><span class="stat-l">Civilizations</span></div>
+      <div class="stat"><span class="stat-n">10</span><span class="stat-l">Tech Domains</span></div>
+      <div class="stat"><span class="stat-n">12</span><span class="stat-l">AI Modules</span></div>
+      <div class="stat"><span class="stat-n" id="stat-decoded">0</span><span class="stat-l">Decoded</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="sig-strip" aria-hidden="true">
+  <div class="sig-glyphs"></div>
+  <div class="sig-bin" id="strip-main"></div>
+</div>
+
+<div class="mod-tabs" id="mod-tabs">
+  <div class="tabs-row" role="tablist">
+    <button class="tab-btn active" role="tab" aria-selected="true"  data-mod="explorer">&#x29C7; Explorer</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" data-mod="tech">Tech Analyzer</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" data-mod="city">City Designer</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" data-mod="sust">Sustainability</button>
+    <button class="tab-btn"        role="tab" aria-selected="false" data-mod="biz">Business</button>
+          <button class="tab-btn" role="tab" aria-selected="false" data-mod="edu">Education</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-mod="compare">Compare</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-mod="research">Research</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-mod="timeline">Timeline</button>
+      <button class="tab-btn"        role="tab" aria-selected="false" data-mod="pitch">Pitch</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-mod="heritage">Heritage</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-mod="archive">Archive<span class="tab-ct hidden" id="arc-count">0</span></button>
+  </div>
+</div>
+
+<!-- MODULE 1: EXPLORER -->
+<div class="mod-panel" id="mod-explorer" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Module 01</p>
+      <h2>Civilization Explorer</h2>
+      <p>Pre-decoded entries load instantly. All others are decoded live by AI. Name any civilization to decode it.</p>
+    </div>
+    <div class="search-wrap">
+      <span class="search-ico" aria-hidden="true">&#x2315;</span>
+      <input class="search-input" type="text" id="civ-search" placeholder="Filter civilizations..." autocomplete="off">
+    </div>
+    <div class="civ-grid">
+      <button class="civ-card" data-cid="egypt"><span class="ctag is-pre">&#x29C7; Pre-decoded</span><h3>Ancient Egypt</h3><div class="c-era">c. 3100&ndash;30 BCE</div><p class="c-teaser">A kingdom run on flood forecasts, granaries, and scribal precision.</p></button>
+      <button class="civ-card" data-cid="rome"><span class="ctag is-pre">&#x29C7; Pre-decoded</span><h3>Ancient Rome</h3><div class="c-era">c. 753 BCE&ndash;476 CE</div><p class="c-teaser">An empire held together by roads, standardized law, and concrete.</p></button>
+      <button class="civ-card" data-cid="benin"><span class="ctag is-pre">&#x29C7; Pre-decoded</span><h3>Kingdom of Benin</h3><div class="c-era">c. 1180&ndash;1897 CE</div><p class="c-teaser">Bronze-cast knowledge archives and the world&rsquo;s largest pre-modern earthwork.</p></button>
+      <button class="civ-card" data-cid="maya"><span class="ctag is-pre">&#x29C7; Pre-decoded</span><h3>Maya Civilization</h3><div class="c-era">c. 2000 BCE&ndash;1500s CE</div><p class="c-teaser">Jungle cities run on astronomy, water banking, and a 365-day calendar.</p></button>
+      <button class="civ-card" data-cid="mali"><span class="ctag is-pre">&#x29C7; Pre-decoded</span><h3>Mali Empire</h3><div class="c-era">c. 1235&ndash;1600 CE</div><p class="c-teaser">The wealthiest medieval state &mdash; built on gold, scholarship, and Timbuktu.</p></button>
+      <button class="civ-card" data-cid="mesopotamia"><span class="ctag">Live decode</span><h3>Mesopotamia</h3><div class="c-era">c. 3500&ndash;539 BCE</div><p class="c-teaser">The first cities, the first written law, the first wheel.</p></button>
+      <button class="civ-card" data-cid="indus"><span class="ctag">Live decode</span><h3>Indus Valley</h3><div class="c-era">c. 3300&ndash;1300 BCE</div><p class="c-teaser">Standardized bricks and citywide sewage &mdash; no palaces in sight.</p></button>
+      <button class="civ-card" data-cid="greece"><span class="ctag">Live decode</span><h3>Ancient Greece</h3><div class="c-era">c. 800&ndash;146 BCE</div><p class="c-teaser">Democracy, debate, and the birth of formal logic.</p></button>
+      <button class="civ-card" data-cid="china"><span class="ctag">Live decode</span><h3>Imperial China</h3><div class="c-era">206 BCE&ndash;907 CE</div><p class="c-teaser">A civil service exam system that ran two thousand years without reboot.</p></button>
+      <button class="civ-card" data-cid="inca"><span class="ctag">Live decode</span><h3>Inca Empire</h3><div class="c-era">1438&ndash;1533 CE</div><p class="c-teaser">Mountain roads and knotted-cord records &mdash; no wheels needed.</p></button>
+      <button class="civ-card" data-cid="persia"><span class="ctag">Live decode</span><h3>Achaemenid Persia</h3><div class="c-era">550&ndash;330 BCE</div><p class="c-teaser">A postal relay network and multi-ethnic governance at unmatched scale.</p></button>
+      <button class="civ-card" data-cid="khmer"><span class="ctag">Live decode</span><h3>Khmer Empire</h3><div class="c-era">802&ndash;1431 CE</div><p class="c-teaser">A hydraulic city network that fed a million people in a monsoon climate.</p></button>
+      <button class="civ-card" data-cid="aztec"><span class="ctag">Live decode</span><h3>Aztec Empire</h3><div class="c-era">1300&ndash;1521 CE</div><p class="c-teaser">Floating gardens, tribute logistics, and urban planning on a lake.</p></button>
+      <button class="civ-card" data-cid="zimbabwe"><span class="ctag">Live decode</span><h3>Great Zimbabwe</h3><div class="c-era">c. 1100&ndash;1450 CE</div><p class="c-teaser">Dry-stone monumental architecture and Indian Ocean trade at the heart of Africa.</p></button>
+      <button class="civ-card" data-cid="axum"><span class="ctag">Live decode</span><h3>Aksumite Empire</h3><div class="c-era">c. 100&ndash;960 CE</div><p class="c-teaser">The first African empire to mint its own coins and adopt Christianity.</p></button>
+    </div>
+    <form class="decode-form" id="decode-form">
+      <label class="sr-only" for="civ-input">Name a civilization</label>
+      <input id="civ-input" type="text" placeholder="Name any civilization &mdash; Ottoman, Phoenicia, Viking, Mughal, Carthage&hellip;" autocomplete="off" maxlength="80">
+      <button class="btn-gold" type="submit" id="decode-btn" disabled>Decode</button>
+    </form>
+    <div id="report-panel">
+      <div class="rpt-head">
+        <div class="rpt-head-left"><div class="r-era" id="rpt-era"></div><h2 id="rpt-title"></h2></div>
+        <button class="btn-copy" id="copy-btn" type="button">Copy report</button>
+      </div>
+      <div class="strip-sm" aria-hidden="true"><div class="sg"></div><div class="sb" id="strip-rpt"></div></div>
+      <div id="share-row" class="share-row">
+        <span class="share-lbl">Share:</span>
+        <button class="share-btn s-wa" id="s-wa">&#x2706; WhatsApp</button>
+        <button class="share-btn s-tw" id="s-tw">&#xD835;&#xDD4F; Twitter/X</button>
+        <button class="share-btn s-li" id="s-li">LinkedIn</button>
+      </div>
+     <div id="rpt-status" aria-live="polite"></div>
+      <div class="frags" id="frags"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 2: TECH ANALYZER -->
+<div class="mod-panel hidden" id="mod-tech" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 02</p><h2>Technology Analyzer</h2><p>Choose a domain. ZHIE cross-examines 4 civilizations that tackled it and synthesizes a modern AI solution.</p></div>
+    <div class="chip-group" id="domain-chips" role="group" aria-label="Technology domains">
+      <button class="chip" data-domain="Water Management">Water Management</button>
+      <button class="chip" data-domain="Agriculture and Food">Agriculture &amp; Food</button>
+      <button class="chip" data-domain="Governance and Law">Governance &amp; Law</button>
+      <button class="chip" data-domain="Medicine and Health">Medicine &amp; Health</button>
+      <button class="chip" data-domain="Construction and Engineering">Construction &amp; Engineering</button>
+      <button class="chip" data-domain="Education and Knowledge">Education &amp; Knowledge</button>
+      <button class="chip" data-domain="Trade and Economics">Trade &amp; Economics</button>
+      <button class="chip" data-domain="Military and Defense">Military &amp; Defense</button>
+      <button class="chip" data-domain="Urban Planning">Urban Planning</button>
+      <button class="chip" data-domain="Astronomy and Navigation">Astronomy &amp; Navigation</button>
+    </div>
+    <button class="btn-teal" id="tech-run-btn" disabled type="button">Analyze Domain</button>
+    <div id="tech-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-tech"></div></div>
+      <p class="eyebrow" style="margin-top:1.4rem;">Cross-civilization analysis</p>
+      <div class="tech-title" id="tech-domain-title"></div>
+      <div id="tech-status" aria-live="polite"></div>
+      <div id="tech-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Scanning civilizations across history&hellip;</div><div class="prog-track"><div class="prog-bar go" id="tech-bar"></div></div></div>
+      <div class="compare-grid" id="compare-grid"></div>
+      <div id="tech-synth"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 3: CITY DESIGNER -->
+<div class="mod-panel hidden" id="mod-city" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 03</p><h2>Future City Designer</h2><p>Describe a city challenge. Pick a civilization as your blueprint. ZHIE generates a named AI-powered smart city.</p></div>
+    <div class="city-form">
+      <div class="fg sp2"><label for="city-challenge">City challenge</label><textarea id="city-challenge" placeholder="e.g. Water scarcity in a coastal desert city of 2 million residents with unpredictable rainfall and rising sea levels" maxlength="400"></textarea></div>
+      <div class="fg"><label for="city-civ">Inspiration civilization</label>
+        <select id="city-civ">
+          <option value="">Select a civilization&hellip;</option>
+          <option>Ancient Egypt</option><option>Ancient Rome</option><option>Kingdom of Benin</option>
+          <option>Mali Empire</option><option>Maya Civilization</option><option>Ancient Greece</option>
+          <option>Imperial China (Han&ndash;Tang)</option><option>Inca Empire</option>
+          <option>Achaemenid Persia</option><option>Byzantine Empire</option>
+          <option>Khmer Empire</option><option>Aztec Empire</option>
+          <option>Great Zimbabwe</option><option>Aksumite Empire</option>
+          <option>Mesopotamia (Sumer / Babylon)</option><option>Indus Valley</option>
+        </select>
+      </div>
+      <div class="fg"><label for="city-scale">City scale</label>
+        <select id="city-scale">
+          <option value="small">Small &mdash; under 500k</option>
+          <option value="medium" selected>Medium &mdash; 500k to 3M</option>
+          <option value="large">Large &mdash; 3M+ megacity</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="city-gen-btn" disabled type="button">Design the city</button></div>
+    </div>
+    <div id="city-out">
+      <div id="city-status" aria-live="polite"></div>
+      <div id="city-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Drafting city concept&hellip;</div><div class="prog-track"><div class="prog-bar go" id="city-bar"></div></div></div>
+      <div id="city-render"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 4: SUSTAINABILITY ENGINE -->
+<div class="mod-panel hidden" id="mod-sust" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 04</p><h2>Sustainability Engine</h2><p>Describe an environmental challenge. ZHIE finds 3 ancient civilizations that solved it and generates a modern AI sustainability solution.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg sp2"><label for="sust-challenge">Environmental challenge</label><textarea id="sust-challenge" placeholder="e.g. Severe soil degradation and declining agricultural yields in a semi-arid region due to overfarming and irregular rainfall" maxlength="400"></textarea></div>
+      <div class="fg">
+        <label for="sust-focus">Focus area</label>
+        <select id="sust-focus">
+          <option value="">Any environmental focus</option>
+          <option>Water &amp; Irrigation</option><option>Food Systems &amp; Soil</option>
+          <option>Urban Heat &amp; Green Space</option><option>Land Use &amp; Deforestation</option>
+          <option>Waste &amp; Sanitation</option><option>Coastal &amp; Flood Management</option>
+          <option>Biodiversity &amp; Ecosystems</option><option>Energy &amp; Fuel Systems</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="sust-run-btn" disabled type="button">Generate Sustainability Solution</button></div>
+    </div>
+    <div id="sust-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-sust"></div></div>
+      <div id="sust-status" aria-live="polite"></div>
+      <div id="sust-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Scanning environmental solutions across history&hellip;</div><div class="prog-track"><div class="prog-bar go" id="sust-bar"></div></div></div>
+      <p class="eyebrow" id="sust-eyebrow" style="margin-top:1.4rem;display:none;">Historical approaches</p>
+      <div class="hist-grid" id="hist-grid"></div>
+      <div id="sust-synth"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 5: BUSINESS EXTRACTOR -->
+<div class="mod-panel hidden" id="mod-biz" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 05</p><h2>Business Idea Extractor</h2><p>Pick a civilization and an industry. ZHIE extracts 4 AI-powered business concepts rooted in that civilization&rsquo;s actual practices &mdash; each with an Africa market angle.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg"><label for="biz-civ">Source civilization</label>
+        <select id="biz-civ">
+          <option value="">Select a civilization&hellip;</option>
+          <option>Ancient Egypt</option><option>Ancient Rome</option><option>Kingdom of Benin</option>
+          <option>Mali Empire</option><option>Maya Civilization</option><option>Ancient Greece</option>
+          <option>Imperial China (Han&ndash;Tang)</option><option>Inca Empire</option>
+          <option>Achaemenid Persia</option><option>Mesopotamia (Sumer / Babylon)</option>
+          <option>Indus Valley</option><option>Khmer Empire</option>
+          <option>Aztec Empire</option><option>Great Zimbabwe</option><option>Aksumite Empire</option>
+        </select>
+      </div>
+      <div class="fg"><label for="biz-industry">Industry focus (optional)</label>
+        <select id="biz-industry">
+          <option value="">Any industry</option>
+          <option>Fintech &amp; Payments</option><option>AgriTech</option>
+          <option>Healthcare</option><option>EdTech</option>
+          <option>Logistics &amp; Trade</option><option>Smart Cities</option>
+          <option>Governance &amp; Civic Tech</option><option>Media &amp; Culture</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="biz-run-btn" disabled type="button">Extract Business Ideas</button></div>
+    </div>
+    <div id="biz-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-biz"></div></div>
+      <div id="biz-status" aria-live="polite"></div>
+      <div id="biz-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Extracting business concepts from history&hellip;</div><div class="prog-track"><div class="prog-bar go" id="biz-bar"></div></div></div>
+      <div class="biz-grid" id="biz-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 6: ARCHIVE -->
+<div class="mod-panel hidden" id="mod-archive" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 06</p><h2>Archive</h2><p>Every civilization you decode is saved here. Tap any card to reopen its full report instantly.</p></div>
+    <div id="arc-content">
+      <div class="arc-empty"><div class="arc-icon">&#x29C7;</div><h3>Nothing decoded yet</h3><p>Decode a civilization in the Explorer &mdash; it will appear here automatically.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 7: EDUCATION LAB -->
+<div class="mod-panel hidden" id="mod-edu" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 07</p><h2>Education Innovation Lab</h2><p>Describe a subject to teach. ZHIE finds how 3 ancient civilizations taught it and designs a modern AI-enhanced lesson plan.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg sp2"><label for="edu-subject">Subject or topic</label><textarea id="edu-subject" placeholder="e.g. Mathematics for secondary students, or Critical thinking and civic responsibility for young adults in rural communities" maxlength="300"></textarea></div>
+      <div class="fg"><label for="edu-level">Learning level</label>
+        <select id="edu-level">
+          <option value="">Any level</option>
+          <option>Primary School (ages 6&ndash;12)</option>
+          <option>Secondary School (ages 13&ndash;18)</option>
+          <option>University / College</option>
+          <option>Professional / Adult Learning</option>
+          <option>Community Learning</option>
+        </select>
+      </div>
+      <div class="fg"><label for="edu-context">Learning context</label>
+        <select id="edu-context">
+          <option value="">General</option>
+          <option>Low-resource classroom</option>
+          <option>Mobile-first / rural</option>
+          <option>Oral tradition community</option>
+          <option>Urban school</option>
+          <option>Online / remote</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="edu-run-btn" disabled type="button">Design Lesson Plan</button></div>
+    </div>
+    <div id="edu-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-edu"></div></div>
+      <div id="edu-status" aria-live="polite"></div>
+      <div id="edu-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Studying ancient teaching methods&hellip;</div><div class="prog-track"><div class="prog-bar go" id="edu-bar"></div></div></div>
+      <p class="eyebrow" id="edu-eyebrow" style="margin-top:1.4rem;display:none;">Historical teaching approaches</p>
+      <div class="hist-grid" id="edu-hist-grid"></div>
+      <div id="edu-plan"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 8: MULTI-CIV COMPARE -->
+<div class="mod-panel hidden" id="mod-compare" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 08</p><h2>Multi-Civilization Compare</h2><p>Pick two civilizations. ZHIE compares them across 5 key dimensions and synthesizes a combined AI solution.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg"><label for="cmp-civ1">First civilization</label><select id="cmp-civ1">          <option value="">Select a civilization...</option>
+          <option>Ancient Egypt</option><option>Ancient Rome</option><option>Kingdom of Benin</option>
+          <option>Mali Empire</option><option>Maya Civilization</option><option>Ancient Greece</option>
+          <option>Imperial China (Han-Tang)</option><option>Inca Empire</option>
+          <option>Achaemenid Persia</option><option>Mesopotamia (Sumer/Babylon)</option>
+          <option>Indus Valley</option><option>Khmer Empire</option>
+          <option>Aztec Empire</option><option>Great Zimbabwe</option><option>Aksumite Empire</option></select></div>
+      <div class="fg"><label for="cmp-civ2">Second civilization</label><select id="cmp-civ2">          <option value="">Select a civilization...</option>
+          <option>Ancient Egypt</option><option>Ancient Rome</option><option>Kingdom of Benin</option>
+          <option>Mali Empire</option><option>Maya Civilization</option><option>Ancient Greece</option>
+          <option>Imperial China (Han-Tang)</option><option>Inca Empire</option>
+          <option>Achaemenid Persia</option><option>Mesopotamia (Sumer/Babylon)</option>
+          <option>Indus Valley</option><option>Khmer Empire</option>
+          <option>Aztec Empire</option><option>Great Zimbabwe</option><option>Aksumite Empire</option></select></div>
+      <div class="sp2"><button class="btn-teal" id="cmp-run-btn" disabled type="button">Compare Civilizations</button></div>
+    </div>
+    <div id="cmp-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-cmp"></div></div>
+      <div id="cmp-status" aria-live="polite"></div>
+      <div id="cmp-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Comparing civilizations across dimensions&hellip;</div><div class="prog-track"><div class="prog-bar go" id="cmp-bar"></div></div></div>
+      <div id="cmp-render"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 9: RESEARCH BRIEF GENERATOR -->
+<div class="mod-panel hidden" id="mod-research" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 09</p><h2>Research Brief Generator</h2><p>Pose a research question. Pick a civilization focus. ZHIE generates a structured academic brief you can use, adapt, or submit.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg sp2"><label for="res-question">Research question</label><textarea id="res-question" placeholder="e.g. How can ancient Maya water storage principles inform AI-managed drought response systems in tropical sub-Saharan cities?" maxlength="400"></textarea></div>
+      <div class="fg"><label for="res-civ">Civilization focus</label><select id="res-civ">          <option value="">Select a civilization...</option>
+          <option>Ancient Egypt</option><option>Ancient Rome</option><option>Kingdom of Benin</option>
+          <option>Mali Empire</option><option>Maya Civilization</option><option>Ancient Greece</option>
+          <option>Imperial China (Han-Tang)</option><option>Inca Empire</option>
+          <option>Achaemenid Persia</option><option>Mesopotamia (Sumer/Babylon)</option>
+          <option>Indus Valley</option><option>Khmer Empire</option>
+          <option>Aztec Empire</option><option>Great Zimbabwe</option><option>Aksumite Empire</option></select></div>
+      <div class="fg"><label for="res-field">Academic field</label>
+        <select id="res-field">
+          <option value="">Any field</option>
+          <option>Computer Science / AI</option>
+          <option>Urban Planning</option>
+          <option>Environmental Science</option>
+          <option>History / Archaeology</option>
+          <option>Public Health</option>
+          <option>Economics</option>
+          <option>Education</option>
+          <option>Political Science</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="res-run-btn" disabled type="button">Generate Research Brief</button></div>
+    </div>
+    <div id="res-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-res"></div></div>
+      <div id="res-status" aria-live="polite"></div>
+      <div id="res-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Generating research brief&hellip;</div><div class="prog-track"><div class="prog-bar go" id="res-bar"></div></div></div>
+      <div id="res-render"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 10: TIMELINE VIEW -->
+<div class="mod-panel hidden" id="mod-timeline" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 10</p><h2>Civilization Timeline</h2><p>All 15 civilizations mapped across 5,400 years of history. Tap any bar to decode it instantly in the Explorer.</p></div>
+    <p class="tl-hint" style="margin-top:0.3rem;opacity:1;color:var(--bone2);font-family:var(--ff-m);font-size:0.7rem;">&#x2190; Scroll the timeline left &amp; right on mobile</p>
+    <div class="tl-scroll"><div id="tl-canvas" class="tl-canvas"></div></div>
+    <div class="tl-legend" id="tl-legend"></div>
+    <p class="tl-hint">Tap any bar to open the full report in Explorer.</p>
+  </div>
+</div>
+
+<!-- MODULE 11: INNOVATION PITCH GENERATOR -->
+<div class="mod-panel hidden" id="mod-pitch" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 11</p><h2>Innovation Pitch Generator</h2><p>Pick a civilization and a startup category. ZHIE generates a full investor-ready pitch for an AI-powered business directly rooted in that civilization&rsquo;s practices.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg"><label for="pitch-civ">Source civilization</label>
+        <select id="pitch-civ"><option value="">Select a civilization...</option>
+          <option>Ancient Egypt</option><option>Ancient Rome</option><option>Kingdom of Benin</option>
+          <option>Mali Empire</option><option>Maya Civilization</option><option>Ancient Greece</option>
+          <option>Imperial China (Han-Tang)</option><option>Inca Empire</option>
+          <option>Achaemenid Persia</option><option>Mesopotamia (Sumer/Babylon)</option>
+          <option>Indus Valley</option><option>Khmer Empire</option>
+          <option>Aztec Empire</option><option>Great Zimbabwe</option><option>Aksumite Empire</option></select>
+      </div>
+      <div class="fg"><label for="pitch-cat">Startup category</label>
+        <select id="pitch-cat">
+          <option value="">Any category</option>
+          <option>Fintech &amp; Payments</option><option>AgriTech</option>
+          <option>HealthTech</option><option>EdTech</option><option>GovTech &amp; Civic</option>
+          <option>CleanTech &amp; Sustainability</option><option>Logistics &amp; Trade</option>
+          <option>Smart Cities</option><option>Cultural Tech</option><option>AI Infrastructure</option>
+        </select>
+      </div>
+      <div class="fg"><label for="pitch-market">Target market</label>
+        <select id="pitch-market">
+          <option value="">Global</option>
+          <option>Pan-African</option><option>West Africa</option><option>East Africa</option>
+          <option>North Africa</option><option>Southern Africa</option>
+          <option>Sub-Saharan Africa</option><option>Middle East &amp; Africa</option>
+          <option>Southeast Asia</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="pitch-run-btn" disabled type="button">Generate Pitch</button></div>
+    </div>
+    <div id="pitch-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-pitch"></div></div>
+      <div id="pitch-status" aria-live="polite"></div>
+      <div id="pitch-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Building pitch from ancient wisdom&hellip;</div><div class="prog-track"><div class="prog-bar go" id="pitch-bar"></div></div></div>
+      <div id="pitch-render"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 12: CULTURAL HERITAGE VAULT -->
+<div class="mod-panel hidden" id="mod-heritage" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 12</p><h2>Cultural Heritage Vault</h2><p>Document an endangered cultural practice. ZHIE analyzes its roots, assesses extinction risk, finds ancient parallels, and generates a full AI-powered preservation and revival strategy.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg sp2"><label for="her-practice">Cultural practice or tradition</label>
+        <textarea id="her-practice" placeholder="e.g. The Kpanlogo drum tradition of the Ga people in Accra, Ghana &mdash; a communal music and dance form used in rites of passage and social gatherings" maxlength="400"></textarea>
+      </div>
+      <div class="fg"><label for="her-region">Region / Community</label>
+        <input type="text" id="her-region" placeholder="e.g. West Africa, Ga community, Accra" maxlength="100">
+      </div>
+      <div class="fg"><label for="her-urgency">Urgency</label>
+        <select id="her-urgency">
+          <option value="">Unknown &mdash; assess for me</option>
+          <option>Critical &mdash; fewer than 100 active practitioners</option>
+          <option>Endangered &mdash; fading rapidly across generations</option>
+          <option>Vulnerable &mdash; declining but still practiced</option>
+          <option>Stable &mdash; documentation and digital preservation</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="her-run-btn" disabled type="button">Analyze &amp; Preserve</button></div>
+    </div>
+    <div id="her-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-her"></div></div>
+      <div id="her-status" aria-live="polite"></div>
+      <div id="her-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Analyzing cultural heritage data&hellip;</div><div class="prog-track"><div class="prog-bar go" id="her-bar"></div></div></div>
+      <div id="her-render"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <div>
+        <div class="foot-brand">ZHIE &mdash; Zynora Historical Intelligence Engine</div>
+        <p class="foot-sub">AI-generated reports should be verified against primary sources for serious research. Built on Anthropic Claude Sonnet&nbsp;4.6. Africa-first design philosophy.</p>
+      </div>
+      <div class="roadmap">
+        <h4>Coming next</h4>
+        <div class="roadmap-tags">
+          <span>Language Support (Swahili)</span>
+          <span>Offline Mode (PWA)</span>
+          <span>API Access</span>
+          <span>Collaboration Mode</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-wrap" aria-live="assertive" aria-atomic="true"></div>
+<button id="go-top" aria-label="Back to top">&#8593;</button>
+
+<script>
+const PRESET={"egypt": {"civilization": "Ancient Egypt", "era": "c. 3100–30 BCE", "strengths": "Egypt sustained a unified state for nearly three thousand years — longer than almost any empire since — built on the Nile’s predictable flood cycle, centralized grain-based administration, and a scribal class that preserved institutional knowledge across generations without interruption. No other ancient state maintained political and cultural continuity at this scale for this long.", "technologies": "The 365-day civil calendar tracked flood, sowing, and harvest seasons a full year in advance. Nilometers measured flood height to forecast crop yields and set tax rates before crops were planted. The scribal cadastral system used papyrus and ink to record land ownership, reassigning field boundaries after every flood. State granaries stored surplus grain across years, smoothing consumption against harvest variation.", "problems": "How do you guarantee food security for a civilization entirely dependent on one river’s annual flood? How do you coordinate tens of thousands of workers on projects spanning decades? How do you maintain administrative identity across a kingdom a thousand kilometers long when the fastest message takes weeks?", "successFailure": "The system thrived because the Nile’s flood was unusually predictable, letting bureaucracy substitute for risk management. It collapsed worst when the flood failed across multiple years — paleoclimate records directly link low-flood sequences to the famines and unrest that ended the Old and Middle Kingdoms. A system tuned to known variability is fragile against unprecedented variability: the lesson every AI forecasting system should internalize.", "aiTranslation": "Modern agricultural and water systems face identical brittleness: optimized for historical averages, exposed by climate-driven extremes. AI’s edge over the nilometer is handling dozens of shifting variables simultaneously — satellite soil data, weather models, upstream snowpack — rather than a single annual river reading.", "innovations": [{"name": "Flood-Logic Irrigation AI", "description": "Forecasts soil moisture, yield potential, and water allocation weeks before planting using satellite and sensor networks — the digital nilometer scaled to an entire watershed."}, {"name": "Cadastral Ledger AI", "description": "Tracks land and water rights with scribal-era continuity, dynamically reassigning entitlements after flood or drought the way Egyptian surveyors redrew field boundaries after each inundation."}, {"name": "Granary-Logic Scheduler", "description": "Sequences labor and materials across major infrastructure projects using the same buffering logic Egyptian state granaries used to sustain pyramid workforces across seasons."}, {"name": "Outlier-Event Early Warning", "description": "Trained specifically to flag unprecedented drought anomalies 1–2 years out — designed to catch the rare failures that toppled the Old Kingdom, not just seasonal variation."}], "benefits": "Directly targets food security and transparent resource governance in regions still dependent on a single water source, while the failure-mode lesson pushes designers to build redundancy into forecasting systems rather than repeating Egypt’s vulnerability to outlier years.", "research": "Using paleoclimate Nile flood reconstructions as stress-test data for modern drought-prediction models; comparing Egyptian grain-reserve policy to AI-managed strategic water reserves; studying the scribal cadastral system as an architectural ancestor of modern federated land-registry platforms."}, "rome": {"civilization": "Ancient Rome", "era": "c. 753 BCE–476 CE", "strengths": "Rome’s genius was systems that replicated reliably at continental scale — standardized law, modular engineering, and logistics that moved legions and grain across three continents on the same administrative framework. It was the first civilization to successfully operate a single coherent administrative network across that geography and population.", "technologies": "Aqueducts used gravity and precise gradient engineering to supply Rome’s million-resident city with roughly one billion liters of water daily. Roads used layered construction and standardized widths for rapid movement. Roman concrete enabled long-span structures like the Pantheon’s unreinforced dome — a span not matched for a thousand years. Written law codified as the Twelve Tables gave millions of citizens predictable rules instead of arbitrary rulings.", "problems": "How do you govern millions across a continent with no telecommunications? How do you supply clean water to a city of one million residents? How do you keep distant provinces legally consistent when the capital is weeks away?", "successFailure": "It succeeded by substituting written, replicable standards for case-by-case judgment — the same legal code worked in Britain and Syria alike. It strained as the empire outgrew the speed of Roman communication, and the cost of enforcing standards across 5,000 kilometers of frontier eventually exceeded the tax base.", "aiTranslation": "The coordination problem today is digital rather than geographic: enforcing consistent rules across jurisdictions when local actors have information advantages, and detecting infrastructure failures before they cascade across a network too large for manual oversight.", "innovations": [{"name": "Gradient-Logic Water Grid AI", "description": "Predicts pipe failures from pressure-sensor data and reroutes supply in real time — the digital descendant of the castella overflow balancing system Rome used to distribute aqueduct flow across districts."}, {"name": "Precedent Consistency Checker", "description": "Flags when a new court ruling or regulation contradicts established precedent across jurisdictions — a digital Twelve Tables auditor for courts and compliance teams."}, {"name": "Empire-Scale Freight Router", "description": "Optimizes a national logistics network for system-wide throughput the way the cursus publicus treated the entire road system as one asset, not city-by-city."}, {"name": "Federated Standards AI", "description": "Lets regional administrators handle local decisions while syncing to shared rules — mirroring how Roman provincial governors operated independently under one common legal framework."}], "benefits": "Predictable rules and resilient infrastructure reduce both corruption and system downtime; the Roman lens clarifies which coordination problem an AI system is solving rather than what’s technologically trendy.", "research": "How Roman concrete’s self-healing lime chemistry could inspire infrastructure materials with embedded self-monitoring sensors; comparing Roman census and taxation data-sharing architecture to modern federated government data platforms."}, "benin": {"civilization": "Kingdom of Benin", "era": "c. 1180–1897 CE", "strengths": "Benin was the most sophisticated pre-colonial state in sub-Saharan West Africa, sustaining a highly organized royal court, professional military, and continental trade network for over 700 years without interruption. Its defining strength was systematically encoding state knowledge in durable physical media — making institutional memory resilient to individual human failure in a way most contemporary states never achieved.", "technologies": "The Benin bronze-casting tradition used the lost-wax (cire perdue) process to produce thousands of palace plaques and sculptures that functioned as a living visual archive of royal history, military campaigns, and diplomatic events — a distributed material database encoded in metal. The Benin Walls (Iya) formed the world’s largest pre-modern earthwork system — a network of moats and ramparts extending over 16,000 kilometers, protecting the city and its agricultural hinterland. The Oba’s court operated a sophisticated protocol hierarchy that managed tribute collection, trade regulation, and multi-ethnic diplomatic relations across hundreds of vassal communities.", "problems": "How do you preserve institutional knowledge and political legitimacy across generations without widespread literacy? How do you control access to and movement within a city of 100,000+ residents across complex terrain? How do you manage a tribute and trade network spanning hundreds of kilometers with no telecommunications?", "successFailure": "Benin succeeded at political continuity for over seven centuries by embedding state knowledge in durable objects and architectural structures, making its institutional memory resistant to individual human failure or death. It was ended in 1897 by British military force — an external shock, not an internal collapse — which distinguishes it from most ancient state failures and makes its governance model worth studying on its own terms.", "aiTranslation": "The bronze plaque system is one of history’s earliest approaches to distributed institutional memory — knowledge stored not in one location but across hundreds of objects, making it resilient to partial destruction. This maps directly to distributed ledger architectures and federated knowledge bases in modern AI systems.", "innovations": [{"name": "Distributed Heritage Ledger", "description": "An immutable, distributed record system for governmental decisions, treaties, and resource allocations — inspired by Benin’s bronze plaque archive where no single record could be erased without destroying the whole system."}, {"name": "Perimeter Intelligence Grid", "description": "AI-monitored boundary and access management for urban peripheries, inspired by the Benin Walls’ dual function as both physical security and information-control infrastructure."}, {"name": "Protocol Coordination AI", "description": "Manages multi-stakeholder communication hierarchies and tribute/payment flows across dozens of semi-autonomous entities — modeled on the Oba’s court protocol system that coordinated 50+ vassal communities."}, {"name": "Material Knowledge Encoder", "description": "Converts institutional decisions and organizational histories into durable, non-text formats accessible to communities with low digital literacy — the bronze plaque model applied to modern knowledge preservation."}], "benefits": "Directly addresses institutional memory loss in governance systems across Africa and the developing world, and the distributed ledger model applies globally to any context where centralized record-keeping has failed due to corruption, disaster, or infrastructure weakness.", "research": "AI-assisted cataloguing of surviving Benin bronzes as a test case for institutional memory reconstruction; studying the Benin Walls’ spatial organization as a model for AI-designed urban perimeter systems; applying the Oba court’s protocol hierarchy to multi-party AI coordination frameworks."}, "maya": {"civilization": "Maya Civilization", "era": "c. 2000 BCE–1500s CE", "strengths": "The Maya were the most mathematically sophisticated civilization of the pre-Columbian Americas, developing a positional number system including the concept of zero independently, and applying it to astronomy with precision that allowed solar eclipse prediction centuries in advance. Their civilization persisted for over 3,500 years across dozens of city-states in dramatically varied environments — jungle lowlands, highland valleys, and semi-arid coasts — without ever consolidating into a single empire.", "technologies": "The Maya Long Count calendar coordinated agricultural, religious, and political cycles across multiple independent city-states without central authority. Chultunes (underground cisterns) and large surface reservoirs (aguadas) captured and stored rainwater during wet seasons to sustain cities through long dry periods — a sophisticated water-banking system in an environment with no permanent rivers. The Dresden Codex preserves astronomical tables predicting Venus cycles and solar eclipses accurate to within minutes. Raised-field milpa agriculture and hillside terracing sustained dense urban populations in tropical jungle without depleting soil fertility.", "problems": "How do you sustain a large city in a tropical rainforest with extreme seasonal rainfall and long dry periods, and no permanent rivers? How do you coordinate political and agricultural cycles across dozens of independent polities? How do you maintain astronomical knowledge over centuries without a persistent centralized institution?", "successFailure": "The Maya succeeded brilliantly at water management and knowledge preservation for millennia. The Classic Period collapse (800–900 CE) is now linked by lake-sediment analysis to multi-decade drought combined with political fragmentation: the water system that sustained cities for centuries failed when rainfall dropped below the threshold the cisterns were sized for — the same brittleness Egypt showed against Nile failures, in a different ecosystem. Crucially, millions of Maya people and communities survived and still exist today, making the ‘collapse’ a political decentralization rather than a civilizational end.", "aiTranslation": "The Maya’s core engineering insight — that water must be banked during abundance to survive scarcity — translates directly into AI-managed water storage and demand forecasting. Their astronomical prediction system, built from centuries of observational time-series data, is a direct ancestor of modern long-cycle predictive modeling.", "innovations": [{"name": "Rainfall Banking AI", "description": "Optimizes urban water storage decisions — when to fill reservoirs, how to prioritize distribution during shortage — using the Maya chultun logic scaled to a city-wide sensor and reservoir network."}, {"name": "Long-Cycle Failure Predictor", "description": "Applies Maya-style multi-decade pattern recognition to infrastructure: flagging slow-moving crisis signals from multi-year sensor trends rather than only recent data, catching what short-window models miss."}, {"name": "Polycentric Coordination AI", "description": "Coordinates services across multiple independent city districts without central control — modeled on how Maya city-states maintained calendar synchronization and trade protocols without a unifying empire."}, {"name": "Tropical Agri-Intelligence", "description": "AI agronomy system for tropical environments managing milpa polyculture, soil rotation, and raised-field water tables — directly adapting Maya sustainable intensification for modern food security."}], "benefits": "Addresses water insecurity in seasonally-dry tropical cities across West Africa, Southeast Asia, and Central America, and the long-cycle prediction model applies to any infrastructure system where short-window AI models miss slow-building crises.", "research": "Using Maya lake-sediment drought records as training data for climate-resilience models in analogous tropical environments; applying Long Count multi-cycle tracking to AI systems coordinating on different time horizons simultaneously; studying Maya reservoir geometry for AI-optimized urban water storage design."}, "mali": {"civilization": "Mali Empire", "era": "c. 1235–1600 CE", "strengths": "The Mali Empire was the wealthiest state in the medieval world at its height, controlling more than half of the world’s gold supply and the trans-Saharan trade routes that linked sub-Saharan Africa to North Africa, the Middle East, and Europe. Its greatest intellectual achievement was transforming Timbuktu into the world’s largest center of Islamic learning, with over 25,000 scholars and a private manuscript tradition that preserved hundreds of thousands of texts.", "technologies": "The empire’s administrative structure used a layered system of local governors (farins) reporting to the Mansa through a standardized tribute and taxation system. The Djinguereber Mosque and Sankore University formed the intellectual infrastructure of Timbuktu, where manuscript libraries preserved scientific, mathematical, and legal knowledge in Arabic and Ajami across private family collections. The trans-Saharan trade network used standardized weights and a sophisticated currency system based on gold dust and copper, enabling commerce across 5,000 kilometers of territory.", "problems": "How do you administer a gold-producing empire spanning 1.2 million square kilometers across desert and savanna? How do you preserve and transmit scholarly knowledge in an environment hostile to paper? How do you maintain trade route security and commercial trust across thousands of kilometers of open desert?", "successFailure": "Mali succeeded spectacularly at wealth generation and knowledge preservation because it controlled both the production of gold (in Bambuk and Bure) and the distribution routes across the Sahara, creating a structural monopoly that funded the entire Timbuktu intellectual apparatus. It weakened when rival states broke the trade monopoly and internal succession disputes fragmented central authority — a classic resource-rent trap.", "aiTranslation": "The Timbuktu manuscript system — knowledge preserved across thousands of private family libraries rather than centralized archives — is one of history’s most resilient distributed knowledge networks. This directly maps to federated, decentralized AI knowledge systems that survive the failure of any single node.", "innovations": [{"name": "Distributed Knowledge Vault AI", "description": "Federated digital preservation system for rare documents and oral knowledge across private community collections — modeled on Timbuktu’s family manuscript libraries, where no single destruction event could erase the whole corpus."}, {"name": "Commodity Route Optimizer", "description": "AI system for optimizing multi-commodity trade corridor logistics across long-distance, low-infrastructure routes — inspired by the trans-Saharan network’s solution to trust, timing, and security across open terrain."}, {"name": "Resource Monopoly Risk Monitor", "description": "AI model that flags when an economy’s stability has become structurally dependent on a single commodity or route, and simulates diversification pathways — drawing directly on Mali’s resource-rent fragility."}, {"name": "Scholarly Network AI", "description": "Connects distributed academic and research communities across low-connectivity regions, enabling knowledge sharing without centralized infrastructure — the Timbuktu scholar network rebuilt for the mobile internet era."}], "benefits": "Directly addresses knowledge preservation and trade corridor optimization challenges across the Sahel and West Africa, while the distributed-knowledge model applies globally to any domain where centralized infrastructure has failed to reach communities.", "research": "AI-assisted digitization and cross-referencing of the 300,000+ surviving Timbuktu manuscripts; applying the trans-Saharan trade network’s trust architecture to modern informal economy fintech solutions; modeling Mali’s resource-rent collapse as a training case for AI economic resilience systems."}};
+
+/* ============ UTILITIES ============ */
+function txt(el,s){ if(el) el.textContent=(s==null?'':String(s)); }
+function rndBin(n){ let s=''; for(let i=0;i<n;i++) s+=(Math.random()>.5?'1':'0')+' '; return s; }
+function toast(msg){
+  const wrap=document.getElementById('toast-wrap');
+  if(!wrap) return;
+  const t=document.createElement('div');
+  t.className='toast';
+  t.textContent=msg;
+  wrap.appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; setTimeout(()=>t.remove(),300); },2400);
+}
+function showProg(progEl,barEl){
+  progEl.style.display='block';
+  barEl.style.width='0%';
+  barEl.classList.add('go');
+}
+function hideProg(progEl,barEl){
+  barEl.classList.remove('go');
+  barEl.style.width='100%';
+  setTimeout(()=>{ progEl.style.display='none'; barEl.style.width='0%'; },400);
+}
+
+/* ============ STRIPS ============ */
+['strip-main','strip-rpt','strip-tech','strip-sust','strip-biz'].forEach(id=>{
+  const el=document.getElementById(id); if(el) el.textContent=rndBin(120);
+});
+document.querySelectorAll('.strip-sm .sb').forEach(el=>{ el.textContent=rndBin(80); });
+
+/* ============ TABS ============ */
+function switchTab(mod){
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    const on=b.dataset.mod===mod;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-selected',String(on));
+  });
+  document.querySelectorAll('.mod-panel').forEach(p=>p.classList.toggle('hidden',p.id!=='mod-'+mod));
+  document.getElementById('mod-tabs').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.mod)));
+
+/* ============ SCROLL TOP ============ */
+const goTopBtn=document.getElementById('go-top');
+window.addEventListener('scroll',()=>goTopBtn.classList.toggle('show',window.scrollY>500),{passive:true});
+goTopBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
+
+/* ============ STATS ============ */
+let decodedCount=0;
+function incDecoded(){
+  decodedCount++;
+  const el=document.getElementById('stat-decoded');
+  if(el) el.textContent=decodedCount;
+}
+
+/* ============ ARCHIVE ============ */
+const ARCHIVE={};
+async function arcSave(report){
+  const k='zhie:arc:'+report.civilization.toLowerCase().replace(/\W+/g,'-');
+  const entry={report,at:new Date().toISOString()};
+  ARCHIVE[k]=entry;
+  try{ await window.storage.set(k,JSON.stringify(entry)); }catch(e){}
+  arcRender();
+  incDecoded();
+  toast('\u29C7 '+report.civilization+' saved to archive');
+}
+async function arcLoad(){
+  try{
+    const res=await window.storage.list('zhie:arc:');
+    if(res&&res.keys){
+      for(const k of res.keys){
+        try{ const r=await window.storage.get(k); if(r) ARCHIVE[k]=JSON.parse(r.value); }catch(e){}
+      }
+    }
+  }catch(e){}
+  arcRender();
+}
+function arcRender(){
+  const entries=Object.values(ARCHIVE);
+  const ct=document.getElementById('arc-count');
+  const content=document.getElementById('arc-content');
+  if(ct){ if(entries.length>0){ct.textContent=entries.length;ct.classList.remove('hidden');}else{ct.classList.add('hidden');} }
+  const decodedEl=document.getElementById('stat-decoded');
+  if(decodedEl) decodedEl.textContent=entries.length;
+  if(!content) return;
+  if(entries.length===0){
+    content.innerHTML='<div class="arc-empty"><div class="arc-icon">&#x29C7;</div><h3>Nothing decoded yet</h3><p>Decode a civilization in the Explorer &mdash; it will appear here automatically.</p></div>';
+    return;
+  }
+  const grid=document.createElement('div');
+  grid.className='arc-grid';
+  [...entries].reverse().forEach(({report,at})=>{
+    const d=new Date(at);
+    const ds=d.toLocaleString([],{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    const card=document.createElement('button');
+    card.className='arc-card';
+    card.innerHTML='<div class="arc-type">&#x29C7; Decoded</div><h3></h3><div class="arc-era"></div><div class="arc-date"></div><div class="arc-action">View full report &rarr;</div>';
+    txt(card.querySelector('h3'),report.civilization);
+    txt(card.querySelector('.arc-era'),report.era||'');
+    txt(card.querySelector('.arc-date'),'Decoded '+ds);
+    card.addEventListener('click',()=>{
+      switchTab('explorer');
+      openReport(report);
+      document.getElementById('report-panel').scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    grid.appendChild(card);
+  });
+  content.innerHTML='';
+  content.appendChild(grid);
+}
+
+/* ============ CLAUDE API ============ */
+async function callClaude(system,userMsg){
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1200,system,messages:[{role:'user',content:userMsg}]})
+  });
+  if(!res.ok) throw new Error('HTTP '+res.status);
+  const data=await res.json();
+  const tb=(data.content||[]).find(b=>b.type==='text');
+  if(!tb) throw new Error('No text block');
+  const raw=tb.text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
+  return JSON.parse(raw);
+}
+
+/* ============ MODULE 1: EXPLORER ============ */
+let activeCard=null;
+let currentReport=null;
+let progTimer=null;
+
+function setActive(cid){
+  if(activeCard) activeCard.classList.remove('active');
+  activeCard=cid?document.querySelector('.civ-card[data-cid="'+cid+'"]'):null;
+  if(activeCard) activeCard.classList.add('active');
+}
+function markDone(cid){
+  if(!cid) return;
+  const card=document.querySelector('.civ-card[data-cid="'+cid+'"]');
+  if(!card) return;
+  const t=card.querySelector('.ctag');
+  if(t&&!t.classList.contains('is-pre')){ t.textContent='\u29C7 Decoded'; t.className='ctag is-done'; }
+}
+
+function showExplorerProg(statusEl){
+  statusEl.innerHTML='';
+  const wrap=document.createElement('div');
+  wrap.className='prog-wrap';
+  wrap.innerHTML='<div class="prog-label" id="plbl">Initializing excavation\u2026</div>'
+    +'<div class="prog-track"><div class="prog-bar go" id="pbar"></div></div>'
+    +'<div class="prog-steps">'
+    +'<span class="ps on" id="ps0">Scanning history</span>'
+    +'<span class="ps" id="ps1">Mapping technologies</span>'
+    +'<span class="ps" id="ps2">Building AI parallels</span>'
+    +'<span class="ps" id="ps3">Generating innovations</span>'
+    +'</div>';
+  statusEl.appendChild(wrap);
+  const labels=['Scanning history\u2026','Mapping technologies\u2026','Building AI parallels\u2026','Generating innovations\u2026'];
+  let si=0;
+  if(progTimer) clearInterval(progTimer);
+  progTimer=setInterval(()=>{
+    const prev=document.getElementById('ps'+si);
+    if(prev){prev.classList.remove('on');prev.classList.add('done');}
+    si++;
+    if(si<4){
+      const cur=document.getElementById('ps'+si); if(cur) cur.classList.add('on');
+      const lbl=document.getElementById('plbl'); if(lbl) lbl.textContent=labels[si]||'';
+    } else { clearInterval(progTimer); progTimer=null; }
+  },950);
+}
+function clearProg(){ if(progTimer){clearInterval(progTimer);progTimer=null;} }
+
+function showErr(statusEl,name,retryFn){
+  clearProg();
+  const d=document.createElement('div'); d.className='err-msg';
+  const m=document.createElement('span'); m.textContent='Decode failed for "'+name+'"';
+  const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+  b.addEventListener('click',retryFn);
+  d.appendChild(m); d.appendChild(b);
+  statusEl.innerHTML=''; statusEl.appendChild(d);
+}
+
+function openReport(report){
+  clearProg();
+  currentReport=report;
+  const panel=document.getElementById('report-panel');
+  const statusEl=document.getElementById('rpt-status');
+  const fragsEl=document.getElementById('frags');
+  statusEl.innerHTML=''; fragsEl.innerHTML='';
+  txt(document.getElementById('rpt-era'),report.era||'');
+  txt(document.getElementById('rpt-title'),report.civilization);
+  const stripEl=document.getElementById('strip-rpt');
+  if(stripEl) stripEl.textContent=rndBin(120);
+
+  const SECTS=[
+    {n:'03',t:'Strengths',k:'strengths'},
+    {n:'04',t:'Technologies & Systems',k:'technologies'},
+    {n:'05',t:'Problems It Solved',k:'problems'},
+    {n:'06',t:'Why It Succeeded \u2014 or Failed',k:'successFailure'},
+    {n:'07',t:'The AI Parallel',k:'aiTranslation'}
+  ];
+  SECTS.forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='frag'; d.style.animationDelay=(i*0.05)+'s';
+    d.innerHTML='<div class="fnum"></div><h4></h4><p></p>';
+    txt(d.querySelector('.fnum'),s.n); txt(d.querySelector('h4'),s.t);
+    txt(d.querySelector('p'),report[s.k]||'');
+    fragsEl.appendChild(d);
+  });
+  const iDiv=document.createElement('div');
+  iDiv.className='frag span2'; iDiv.style.animationDelay=(SECTS.length*0.05)+'s';
+  iDiv.innerHTML='<div class="fnum">08</div><h4>AI Innovations</h4>';
+  const iWrap=document.createElement('div'); iWrap.className='innov-wrap';
+  (report.innovations||[]).forEach(inv=>{
+    const c=document.createElement('div'); c.className='innov-card';
+    c.innerHTML='<div class="innov-name"></div><p></p>';
+    txt(c.querySelector('.innov-name'),inv.name); txt(c.querySelector('p'),inv.description);
+    iWrap.appendChild(c);
+  });
+  iDiv.appendChild(iWrap); fragsEl.appendChild(iDiv);
+  [{n:'09',t:'Human Benefit',k:'benefits'},{n:'10',t:'Research Directions',k:'research'}].forEach((s,i)=>{
+    const d=document.createElement('div');
+    d.className='frag'; d.style.animationDelay=((SECTS.length+1+i)*0.05)+'s';
+    d.innerHTML='<div class="fnum"></div><h4></h4><p></p>';
+    txt(d.querySelector('.fnum'),s.n); txt(d.querySelector('h4'),s.t);
+    txt(d.querySelector('p'),report[s.k]||'');
+    fragsEl.appendChild(d);
+  });
+  panel.classList.add('open');
+  if(typeof showShareFor==='function') showShareFor(report);
+}
+
+/* copy */
+document.getElementById('copy-btn').addEventListener('click',function(){
+  if(!currentReport) return;
+  const r=currentReport;
+  const txt2=[
+    'ZHIE REPORT: '+r.civilization+' | '+r.era,'',
+    'STRENGTHS\n'+r.strengths,'',
+    'TECHNOLOGIES & SYSTEMS\n'+r.technologies,'',
+    'PROBLEMS IT SOLVED\n'+r.problems,'',
+    'WHY IT SUCCEEDED OR FAILED\n'+r.successFailure,'',
+    'THE AI PARALLEL\n'+r.aiTranslation,'',
+    'AI INNOVATIONS',
+    ...(r.innovations||[]).map(v=>'- '+v.name+': '+v.description),'',
+    'HUMAN BENEFIT\n'+r.benefits,'',
+    'RESEARCH DIRECTIONS\n'+r.research,'',
+    'Generated by ZHIE (Zynora Historical Intelligence Engine)'
+  ];
+  const self=this;
+  navigator.clipboard.writeText(txt2.join('\n'))
+    .then(()=>{ self.textContent='Copied \u2713'; self.classList.add('ok'); setTimeout(()=>{self.textContent='Copy report';self.classList.remove('ok');},2200); })
+    .catch(()=>{ self.textContent='Copy failed'; setTimeout(()=>{self.textContent='Copy report';},1800); });
+});
+
+/* system prompt */
+const SYS_EXPL='You are a historical-innovation analysis engine. Return ONLY a single valid JSON object, no markdown, no fences, no prose. Be historically accurate and specific. Use the closest real match if input is not a recognized civilization. Schema (strings 2-4 sentences each; innovation description 1-2 sentences): {"civilization":string,"era":string,"strengths":string,"technologies":string,"problems":string,"successFailure":string,"aiTranslation":string,"innovations":[{"name":string,"description":string},{"name":string,"description":string},{"name":string,"description":string},{"name":string,"description":string}],"benefits":string,"research":string}';
+
+async function runDecode(name,cid){
+  const panel=document.getElementById('report-panel');
+  panel.classList.add('open');
+  txt(document.getElementById('rpt-title'),name);
+  txt(document.getElementById('rpt-era'),'');
+  document.getElementById('frags').innerHTML='';
+  const statusEl=document.getElementById('rpt-status');
+  showExplorerProg(statusEl);
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const report=await callClaude(SYS_EXPL,name);
+    openReport(report);
+    arcSave(report);
+    markDone(cid);
+  }catch(err){
+    showErr(statusEl,name,()=>runDecode(name,cid));
+  }
+}
+
+/* card clicks */
+document.querySelectorAll('.civ-card').forEach(card=>{
+  card.addEventListener('click',()=>{
+    const cid=card.dataset.cid;
+    setActive(cid);
+    if(PRESET[cid]){
+      const panel=document.getElementById('report-panel');
+      panel.classList.add('open');
+      openReport(PRESET[cid]);
+      arcSave(PRESET[cid]);
+      panel.scrollIntoView({behavior:'smooth',block:'start'});
+    } else {
+      runDecode(card.querySelector('h3').textContent,cid);
+    }
+  });
+});
+
+/* custom form */
+const civInput=document.getElementById('civ-input');
+const decodeBtn=document.getElementById('decode-btn');
+civInput.addEventListener('input',()=>{ decodeBtn.disabled=!civInput.value.trim(); });
+document.getElementById('decode-form').addEventListener('submit',e=>{
+  e.preventDefault();
+  const name=civInput.value.trim();
+  if(!name) return;
+  setActive(null);
+  civInput.value=''; decodeBtn.disabled=true;
+  runDecode(name,null);
+});
+
+/* search */
+document.getElementById('civ-search').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  document.querySelectorAll('.civ-card').forEach(card=>{
+    const n=card.querySelector('h3').textContent.toLowerCase();
+    const t=card.querySelector('.c-teaser').textContent.toLowerCase();
+    card.style.display=(!q||n.includes(q)||t.includes(q))?'':'none';
+  });
+});
+
+/* ============ MODULE 2: TECH ANALYZER ============ */
+let selDomain=null;
+const techRunBtn=document.getElementById('tech-run-btn');
+document.querySelectorAll('#domain-chips .chip').forEach(chip=>{
+  chip.addEventListener('click',()=>{
+    document.querySelectorAll('#domain-chips .chip').forEach(c=>c.classList.remove('sel'));
+    chip.classList.add('sel');
+    selDomain=chip.dataset.domain;
+    techRunBtn.disabled=false;
+  });
+});
+const SYS_TECH='You are a historical technology analysis engine. Return ONLY valid JSON, no markdown, no fences. Identify exactly 4 ancient civilizations with historically notable approaches to the given domain. Schema: {"domain":string,"civilizations":[{"name":string,"era":string,"approach":string,"outcome":"succeeded"|"failed"|"mixed"},{"name":string,"era":string,"approach":string,"outcome":"succeeded"|"failed"|"mixed"},{"name":string,"era":string,"approach":string,"outcome":"succeeded"|"failed"|"mixed"},{"name":string,"era":string,"approach":string,"outcome":"succeeded"|"failed"|"mixed"}],"synthesis":string,"aiSolution":{"name":string,"description":string,"features":["string","string","string","string"]}} approach: 2-3 sentences. synthesis: 2-3 sentences. aiSolution.description: 2-3 sentences.';
+techRunBtn.addEventListener('click',async()=>{
+  if(!selDomain) return;
+  techRunBtn.disabled=true;
+  const out=document.getElementById('tech-out'); out.classList.add('open');
+  const statusEl=document.getElementById('tech-status');
+  const progEl=document.getElementById('tech-prog'); const barEl=document.getElementById('tech-bar');
+  const compareGrid=document.getElementById('compare-grid'); const synthEl=document.getElementById('tech-synth');
+  const stripEl=document.getElementById('strip-tech');
+  txt(document.getElementById('tech-domain-title'),selDomain);
+  statusEl.innerHTML=''; compareGrid.innerHTML=''; synthEl.innerHTML='';
+  if(stripEl) stripEl.textContent=rndBin(120);
+  showProg(progEl,barEl);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const result=await callClaude(SYS_TECH,selDomain);
+    hideProg(progEl,barEl); statusEl.innerHTML='';
+    (result.civilizations||[]).forEach((c,i)=>{
+      const card=document.createElement('div');
+      card.className='cc-card frag'; card.style.animationDelay=(i*0.07)+'s';
+      const oc=c.outcome==='succeeded'?'b-ok':c.outcome==='failed'?'b-fail':'b-mix';
+      card.innerHTML='<div class="cc-name"></div><div class="cc-era"></div><p class="cc-approach"></p><span class="badge '+oc+'"></span>';
+      txt(card.querySelector('.cc-name'),c.name); txt(card.querySelector('.cc-era'),c.era);
+      txt(card.querySelector('.cc-approach'),c.approach);
+      txt(card.querySelector('.badge'),c.outcome||'mixed');
+      compareGrid.appendChild(card);
+    });
+    if(result.synthesis&&result.aiSolution){
+      const ai=result.aiSolution;
+      const sb1=document.createElement('div'); sb1.className='synth-box frag'; sb1.style.animationDelay='0.3s';
+      sb1.innerHTML='<div class="synth-label">Cross-civilizational lesson</div><p class="synth-desc"></p>';
+      txt(sb1.querySelector('.synth-desc'),result.synthesis);
+      synthEl.appendChild(sb1);
+      const sb2=document.createElement('div'); sb2.className='synth-box frag'; sb2.style.animationDelay='0.4s';
+      sb2.innerHTML='<div class="synth-label">AI Solution</div><div class="synth-title"></div><p class="synth-desc"></p><div class="feat-row"></div>';
+      txt(sb2.querySelector('.synth-title'),ai.name); txt(sb2.querySelector('.synth-desc'),ai.description);
+      const fr=sb2.querySelector('.feat-row');
+      (ai.features||[]).forEach(f=>{ const sp=document.createElement('span'); sp.className='feat'; sp.textContent=f; fr.appendChild(sp); });
+      synthEl.appendChild(sb2);
+    }
+  }catch(err){
+    hideProg(progEl,barEl);
+    const d=document.createElement('div'); d.className='err-msg'; d.textContent='Analysis failed. ';
+    const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+    b.addEventListener('click',()=>techRunBtn.click()); d.appendChild(b); statusEl.appendChild(d);
+  }
+  techRunBtn.disabled=false;
+});
+
+/* ============ MODULE 3: CITY DESIGNER ============ */
+const cityChallenge=document.getElementById('city-challenge');
+const cityCivSel=document.getElementById('city-civ');
+const cityGenBtn=document.getElementById('city-gen-btn');
+function updCityBtn(){ cityGenBtn.disabled=!(cityChallenge.value.trim()&&cityCivSel.value); }
+cityChallenge.addEventListener('input',updCityBtn); cityCivSel.addEventListener('change',updCityBtn);
+const SYS_CITY='You are a future city design AI. Return ONLY valid JSON, no markdown, no fences. Schema: {"cityName":string,"concept":string,"inspiration":string,"districts":[{"name":string,"function":string,"aiSystem":string},{"name":string,"function":string,"aiSystem":string},{"name":string,"function":string,"aiSystem":string},{"name":string,"function":string,"aiSystem":string}],"signature":string} cityName: evocative invented name. concept: 2-3 sentences. inspiration: 2 sentences on how the civilization directly shapes this design. district.function: 1-2 sentences. district.aiSystem: 1-2 sentences. signature: 2 sentences on the single most historically-echoing feature.';
+cityGenBtn.addEventListener('click',async()=>{
+  const challenge=cityChallenge.value.trim(); const civ=cityCivSel.value;
+  const scale=document.getElementById('city-scale').value;
+  if(!challenge||!civ) return;
+  cityGenBtn.disabled=true;
+  const out=document.getElementById('city-out'); out.classList.add('open');
+  const statusEl=document.getElementById('city-status');
+  const progEl=document.getElementById('city-prog'); const barEl=document.getElementById('city-bar');
+  const render=document.getElementById('city-render');
+  statusEl.innerHTML=''; render.innerHTML='';
+  showProg(progEl,barEl);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const city=await callClaude(SYS_CITY,'Challenge: '+challenge+'\nCivilization: '+civ+'\nScale: '+scale);
+    hideProg(progEl,barEl); statusEl.innerHTML='';
+    const banner=document.createElement('div'); banner.className='city-banner frag';
+    banner.innerHTML='<div class="city-name"></div><p class="city-concept"></p><div class="city-inspo"></div>';
+    txt(banner.querySelector('.city-name'),city.cityName);
+    txt(banner.querySelector('.city-concept'),city.concept);
+    txt(banner.querySelector('.city-inspo'),'\u21b3 Inspired by '+civ+': '+city.inspiration);
+    render.appendChild(banner);
+    const dLbl=document.createElement('p'); dLbl.className='eyebrow'; dLbl.style.marginTop='1.5rem'; dLbl.textContent='AI-powered districts';
+    render.appendChild(dLbl);
+    const dGrid=document.createElement('div'); dGrid.className='district-grid';
+    (city.districts||[]).forEach((d,i)=>{
+      const card=document.createElement('div'); card.className='district-card frag'; card.style.animationDelay=(0.08+i*0.07)+'s';
+      card.innerHTML='<div class="dc-label"></div><div class="dc-name"></div><p class="dc-fn"></p><p class="dc-ai"></p>';
+      txt(card.querySelector('.dc-label'),'District '+String.fromCharCode(65+i));
+      txt(card.querySelector('.dc-name'),d.name); txt(card.querySelector('.dc-fn'),d.function);
+      txt(card.querySelector('.dc-ai'),'\u29C7 AI: '+d.aiSystem);
+      dGrid.appendChild(card);
+    });
+    render.appendChild(dGrid);
+    if(city.signature){
+      const sig=document.createElement('div'); sig.className='city-sig frag'; sig.style.animationDelay='0.44s';
+      sig.innerHTML='<div class="city-sig-label">Signature Feature \u2014 Ancient Echo</div><p></p>';
+      txt(sig.querySelector('p'),city.signature); render.appendChild(sig);
+    }
+  }catch(err){
+    hideProg(progEl,barEl);
+    const d=document.createElement('div'); d.className='err-msg'; d.textContent='City design failed. ';
+    const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+    b.addEventListener('click',()=>cityGenBtn.click()); d.appendChild(b); statusEl.appendChild(d);
+  }
+  cityGenBtn.disabled=false; updCityBtn();
+});
+
+/* ============ MODULE 4: SUSTAINABILITY ENGINE ============ */
+const sustChallenge=document.getElementById('sust-challenge');
+const sustFocus=document.getElementById('sust-focus');
+const sustRunBtn=document.getElementById('sust-run-btn');
+sustChallenge.addEventListener('input',()=>{ sustRunBtn.disabled=!sustChallenge.value.trim(); });
+const SYS_SUST='You are an AI sustainability analyst with deep knowledge of ancient environmental management. Return ONLY valid JSON, no markdown, no fences. Given an environmental challenge and optional focus area, identify 3 ancient civilizations that successfully managed analogous challenges, then synthesize a modern AI sustainability solution. Schema: {"challenge":string,"civilizations":[{"name":string,"era":string,"approach":string,"lesson":string},{"name":string,"era":string,"approach":string,"lesson":string},{"name":string,"era":string,"approach":string,"lesson":string}],"synthesis":string,"aiSolution":{"name":string,"description":string,"components":["string","string","string","string"]},"implementation":string} approach: 2-3 sentences on what the civilization did. lesson: 1 sentence on the key AI-translatable insight. synthesis: 2-3 sentences on the cross-civilizational pattern. aiSolution.description: 2-3 sentences. implementation: 2-3 sentences on how to deploy this today.';
+sustRunBtn.addEventListener('click',async()=>{
+  const challenge=sustChallenge.value.trim(); const focus=sustFocus.value;
+  if(!challenge) return;
+  sustRunBtn.disabled=true;
+  const out=document.getElementById('sust-out'); out.classList.add('open');
+  const statusEl=document.getElementById('sust-status');
+  const progEl=document.getElementById('sust-prog'); const barEl=document.getElementById('sust-bar');
+  const histGrid=document.getElementById('hist-grid'); const synthEl=document.getElementById('sust-synth');
+  const eyebrow=document.getElementById('sust-eyebrow');
+  const stripEl=document.getElementById('strip-sust');
+  statusEl.innerHTML=''; histGrid.innerHTML=''; synthEl.innerHTML='';
+  eyebrow.style.display='none';
+  if(stripEl) stripEl.textContent=rndBin(120);
+  showProg(progEl,barEl);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const prompt='Challenge: '+challenge+(focus?'\nFocus: '+focus:'');
+    const result=await callClaude(SYS_SUST,prompt);
+    hideProg(progEl,barEl); statusEl.innerHTML='';
+    eyebrow.style.display='';
+    (result.civilizations||[]).forEach((c,i)=>{
+      const card=document.createElement('div'); card.className='hist-card frag'; card.style.animationDelay=(i*0.07)+'s';
+      card.innerHTML='<div class="hc-name"></div><div class="hc-era"></div><p class="hc-approach"></p><p class="hc-lesson"></p>';
+      txt(card.querySelector('.hc-name'),c.name); txt(card.querySelector('.hc-era'),c.era);
+      txt(card.querySelector('.hc-approach'),c.approach);
+      txt(card.querySelector('.hc-lesson'),'\u2192 '+c.lesson);
+      histGrid.appendChild(card);
+    });
+    if(result.synthesis&&result.aiSolution){
+      const ai=result.aiSolution;
+      const sb1=document.createElement('div'); sb1.className='synth-box frag'; sb1.style.animationDelay='0.26s';
+      sb1.innerHTML='<div class="synth-label">Cross-civilizational pattern</div><p class="synth-desc"></p>';
+      txt(sb1.querySelector('.synth-desc'),result.synthesis); synthEl.appendChild(sb1);
+      const sb2=document.createElement('div'); sb2.className='synth-box frag'; sb2.style.animationDelay='0.35s';
+      sb2.innerHTML='<div class="synth-label">AI Solution</div><div class="synth-title"></div><p class="synth-desc"></p><div class="sol-comps"></div>';
+      txt(sb2.querySelector('.synth-title'),ai.name); txt(sb2.querySelector('.synth-desc'),ai.description);
+      const sc=sb2.querySelector('.sol-comps');
+      (ai.components||[]).forEach(f=>{ const sp=document.createElement('span'); sp.className='sol-comp'; sp.textContent=f; sc.appendChild(sp); });
+      synthEl.appendChild(sb2);
+      if(result.implementation){
+        const sb3=document.createElement('div'); sb3.className='synth-box frag'; sb3.style.animationDelay='0.44s';
+        sb3.innerHTML='<div class="synth-label">Implementation Pathway</div><p class="impl-box"></p>';
+        txt(sb3.querySelector('.impl-box'),result.implementation); synthEl.appendChild(sb3);
+      }
+    }
+  }catch(err){
+    hideProg(progEl,barEl);
+    const d=document.createElement('div'); d.className='err-msg'; d.textContent='Analysis failed. ';
+    const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+    b.addEventListener('click',()=>sustRunBtn.click()); d.appendChild(b); statusEl.appendChild(d);
+  }
+  sustRunBtn.disabled=false;
+});
+
+/* ============ MODULE 5: BUSINESS EXTRACTOR ============ */
+const bizCiv=document.getElementById('biz-civ');
+const bizRunBtn=document.getElementById('biz-run-btn');
+bizCiv.addEventListener('change',()=>{ bizRunBtn.disabled=!bizCiv.value; });
+const SYS_BIZ='You are an AI business innovation analyst specializing in history-inspired ventures with an Africa-first lens. Return ONLY valid JSON, no markdown, no fences. Given a civilization and optional industry, extract 4 realistic AI-powered business ideas inspired by that civilization actual practices. Schema: {"civilization":string,"ideas":[{"name":string,"tagline":string,"problem":string,"historical_parallel":string,"revenue_model":string,"africa_opportunity":string},{"name":string,"tagline":string,"problem":string,"historical_parallel":string,"revenue_model":string,"africa_opportunity":string},{"name":string,"tagline":string,"problem":string,"historical_parallel":string,"revenue_model":string,"africa_opportunity":string},{"name":string,"tagline":string,"problem":string,"historical_parallel":string,"revenue_model":string,"africa_opportunity":string}]} name: catchy business name. tagline: one-line pitch under 10 words. problem: 1-2 sentences. historical_parallel: 1 sentence on the specific ancient practice adapted. revenue_model: 1 sentence. africa_opportunity: 1 sentence on why especially relevant for African markets.';
+bizRunBtn.addEventListener('click',async()=>{
+  const civ=bizCiv.value; const industry=document.getElementById('biz-industry').value;
+  if(!civ) return;
+  bizRunBtn.disabled=true;
+  const out=document.getElementById('biz-out'); out.classList.add('open');
+  const statusEl=document.getElementById('biz-status');
+  const progEl=document.getElementById('biz-prog'); const barEl=document.getElementById('biz-bar');
+  const grid=document.getElementById('biz-grid');
+  const stripEl=document.getElementById('strip-biz');
+  statusEl.innerHTML=''; grid.innerHTML='';
+  if(stripEl) stripEl.textContent=rndBin(120);
+  showProg(progEl,barEl);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const prompt=civ+(industry?', industry: '+industry:'');
+    const result=await callClaude(SYS_BIZ,prompt);
+    hideProg(progEl,barEl); statusEl.innerHTML='';
+    (result.ideas||[]).forEach((idea,i)=>{
+      const card=document.createElement('div'); card.className='biz-card frag'; card.style.animationDelay=(i*0.07)+'s';
+      card.innerHTML='<div class="biz-name"></div><div class="biz-tag"></div>'
+        +'<div class="biz-sec"><div class="biz-lbl">Problem</div><div class="biz-txt" id="b-prob-'+i+'"></div></div>'
+        +'<div class="biz-sec"><div class="biz-lbl">Historical parallel</div><div class="biz-txt" id="b-hist-'+i+'"></div></div>'
+        +'<div class="biz-sec"><div class="biz-lbl">Revenue model</div><div class="biz-txt" id="b-rev-'+i+'"></div></div>'
+        +'<div class="africa-pill" id="b-af-'+i+'"></div>';
+      txt(card.querySelector('.biz-name'),idea.name);
+      txt(card.querySelector('.biz-tag'),'\u201c'+idea.tagline+'\u201d');
+      txt(document.getElementById('b-prob-'+i),idea.problem);
+      txt(document.getElementById('b-hist-'+i),idea.historical_parallel);
+      txt(document.getElementById('b-rev-'+i),idea.revenue_model);
+      txt(document.getElementById('b-af-'+i),'\u2316 Africa: '+idea.africa_opportunity);
+      grid.appendChild(card);
+    });
+  }catch(err){
+    hideProg(progEl,barEl);
+    const d=document.createElement('div'); d.className='err-msg'; d.textContent='Extraction failed. ';
+    const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+    b.addEventListener('click',()=>bizRunBtn.click()); d.appendChild(b); statusEl.appendChild(d);
+  }
+  bizRunBtn.disabled=false;
+});
+
+
+/* ============ MODULE 7: EDUCATION LAB ============ */
+const eduSubject = document.getElementById('edu-subject');
+const eduRunBtn  = document.getElementById('edu-run-btn');
+eduSubject.addEventListener('input', () => { eduRunBtn.disabled = !eduSubject.value.trim(); });
+
+const SYS_EDU = 'You are an AI education designer with deep knowledge of ancient pedagogical methods. Return ONLY valid JSON, no markdown, no fences. Schema: {"subject":string,"approaches":[{"civilization":string,"era":string,"method":string,"key_principle":string},{"civilization":string,"era":string,"method":string,"key_principle":string},{"civilization":string,"era":string,"method":string,"key_principle":string}],"lesson_plan":{"title":string,"overview":string,"phases":[{"phase":string,"duration":string,"activity":string,"ai_tool":string},{"phase":string,"duration":string,"activity":string,"ai_tool":string},{"phase":string,"duration":string,"activity":string,"ai_tool":string},{"phase":string,"duration":string,"activity":string,"ai_tool":string}],"assessment":string},"africa_application":string} approach.method: 2 sentences. approach.key_principle: 1 sentence AI insight. lesson_plan.overview: 2 sentences. phase.activity: 1-2 sentences. phase.ai_tool: 1 sentence specific AI tool. africa_application: 2 sentences on relevance for African learning contexts.';
+
+eduRunBtn.addEventListener('click', async () => {
+  const subject = eduSubject.value.trim();
+  const level   = document.getElementById('edu-level').value;
+  const ctx     = document.getElementById('edu-context').value;
+  if (!subject) return;
+  eduRunBtn.disabled = true;
+  const out = document.getElementById('edu-out'); out.classList.add('open');
+  const statusEl = document.getElementById('edu-status');
+  const progEl = document.getElementById('edu-prog'), barEl = document.getElementById('edu-bar');
+  const histGrid = document.getElementById('edu-hist-grid'), planEl = document.getElementById('edu-plan');
+  const eyebrow = document.getElementById('edu-eyebrow');
+  const stripEl = document.getElementById('strip-edu');
+  statusEl.innerHTML = ''; histGrid.innerHTML = ''; planEl.innerHTML = ''; eyebrow.style.display = 'none';
+  if (stripEl) stripEl.textContent = rndBin(120);
+  showProg(progEl, barEl);
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  try {
+    const prompt = 'Subject: ' + subject + (level ? '\nLevel: ' + level : '') + (ctx ? '\nContext: ' + ctx : '');
+    const result = await callClaude(SYS_EDU, prompt);
+    hideProg(progEl, barEl); statusEl.innerHTML = ''; eyebrow.style.display = '';
+    (result.approaches || []).forEach((a, i) => {
+      const card = document.createElement('div');
+      card.className = 'hist-card frag'; card.style.animationDelay = (i * 0.07) + 's';
+      card.innerHTML = '<div class="hc-name"></div><div class="hc-era"></div><p class="hc-approach"></p><p class="hc-lesson"></p>';
+      txt(card.querySelector('.hc-name'), a.civilization); txt(card.querySelector('.hc-era'), a.era);
+      txt(card.querySelector('.hc-approach'), a.method);
+      txt(card.querySelector('.hc-lesson'), '\u2192 ' + a.key_principle);
+      histGrid.appendChild(card);
+    });
+    if (result.lesson_plan) {
+      const lp = result.lesson_plan;
+      const box = document.createElement('div'); box.className = 'lesson-plan-box frag'; box.style.animationDelay = '0.25s';
+      box.innerHTML = '<p class="eyebrow" style="margin-bottom:0.55rem;">AI-enhanced lesson plan</p>'
+        + '<div class="lp-title"></div><p class="lp-overview"></p>'
+        + '<div class="phases-grid" id="lp-phases-wrap"></div>'
+        + '<div class="lp-assess"><div class="lp-assess-lbl">Assessment</div><p class="lp-assess-txt"></p></div>';
+      txt(box.querySelector('.lp-title'), lp.title);
+      txt(box.querySelector('.lp-overview'), lp.overview);
+      txt(box.querySelector('.lp-assess-txt'), lp.assessment);
+      const pg = box.querySelector('#lp-phases-wrap');
+      (lp.phases || []).forEach((ph, i) => {
+        const pc = document.createElement('div'); pc.className = 'phase-card';
+        pc.innerHTML = '<div class="phase-num"></div><div class="phase-name"></div><div class="phase-dur"></div><p class="phase-act"></p><p class="phase-ai"></p>';
+        txt(pc.querySelector('.phase-num'), 'Phase ' + (i + 1));
+        txt(pc.querySelector('.phase-name'), ph.phase); txt(pc.querySelector('.phase-dur'), ph.duration);
+        txt(pc.querySelector('.phase-act'), ph.activity);
+        txt(pc.querySelector('.phase-ai'), '\u29C7 AI: ' + ph.ai_tool);
+        pg.appendChild(pc);
+      });
+      planEl.appendChild(box);
+      if (result.africa_application) {
+        const af = document.createElement('div'); af.className = 'africa-box frag'; af.style.animationDelay = '0.38s';
+        af.innerHTML = '<div class="africa-box-lbl">\u2316 Africa Application</div><p></p>';
+        txt(af.querySelector('p'), result.africa_application); planEl.appendChild(af);
+      }
+    }
+  } catch(err) {
+    hideProg(progEl, barEl);
+    const d = document.createElement('div'); d.className = 'err-msg'; d.textContent = 'Lesson design failed. ';
+    const b = document.createElement('button'); b.className = 'btn-retry'; b.textContent = 'Try again';
+    b.addEventListener('click', () => eduRunBtn.click()); d.appendChild(b); statusEl.appendChild(d);
+  }
+  eduRunBtn.disabled = false;
+});
+
+/* ============ MODULE 8: MULTI-CIV COMPARE ============ */
+const cmpCiv1   = document.getElementById('cmp-civ1');
+const cmpCiv2   = document.getElementById('cmp-civ2');
+const cmpRunBtn = document.getElementById('cmp-run-btn');
+function updCmpBtn() { cmpRunBtn.disabled = !(cmpCiv1.value && cmpCiv2.value && cmpCiv1.value !== cmpCiv2.value); }
+cmpCiv1.addEventListener('change', updCmpBtn); cmpCiv2.addEventListener('change', updCmpBtn);
+
+const SYS_CMP = 'You are a comparative civilization analyst. Return ONLY valid JSON, no markdown, no fences. Compare two civilizations across exactly 5 dimensions. Schema: {"civ1":string,"civ2":string,"dimensions":[{"name":string,"civ1_approach":string,"civ2_approach":string,"winner":"civ1"|"civ2"|"tie","lesson":string},{"name":string,"civ1_approach":string,"civ2_approach":string,"winner":"civ1"|"civ2"|"tie","lesson":string},{"name":string,"civ1_approach":string,"civ2_approach":string,"winner":"civ1"|"civ2"|"tie","lesson":string},{"name":string,"civ1_approach":string,"civ2_approach":string,"winner":"civ1"|"civ2"|"tie","lesson":string},{"name":string,"civ1_approach":string,"civ2_approach":string,"winner":"civ1"|"civ2"|"tie","lesson":string}],"synthesis":string,"combined_ai":{"name":string,"description":string}} Use these 5 dimensions in order: Governance, Technology, Sustainability, Trade, Knowledge. Each approach 2-3 sentences. winner: which did better or tie. lesson: 1 sentence AI takeaway. synthesis: 2-3 sentences. combined_ai.description: 2-3 sentences.';
+
+cmpRunBtn.addEventListener('click', async () => {
+  const c1 = cmpCiv1.value, c2 = cmpCiv2.value;
+  if (!c1 || !c2 || c1 === c2) return;
+  cmpRunBtn.disabled = true;
+  const out = document.getElementById('cmp-out'); out.classList.add('open');
+  const statusEl = document.getElementById('cmp-status');
+  const progEl = document.getElementById('cmp-prog'), barEl = document.getElementById('cmp-bar');
+  const render = document.getElementById('cmp-render');
+  const stripEl = document.getElementById('strip-cmp');
+  statusEl.innerHTML = ''; render.innerHTML = '';
+  if (stripEl) stripEl.textContent = rndBin(120);
+  showProg(progEl, barEl);
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  try {
+    const result = await callClaude(SYS_CMP, c1 + ' vs ' + c2);
+    hideProg(progEl, barEl); statusEl.innerHTML = '';
+    const vsBar = document.createElement('div'); vsBar.className = 'cmp-vs-bar frag';
+    vsBar.innerHTML = '<div class="cmp-civ-badge cmp-badge-c1"></div><div class="cmp-vs-dot">VS</div><div class="cmp-civ-badge cmp-badge-c2"></div>';
+    txt(vsBar.querySelector('.cmp-badge-c1'), result.civ1 || c1);
+    txt(vsBar.querySelector('.cmp-badge-c2'), result.civ2 || c2);
+    render.appendChild(vsBar);
+    const dimCards = document.createElement('div'); dimCards.className = 'dim-cards';
+    (result.dimensions || []).forEach((dim, i) => {
+      const card = document.createElement('div'); card.className = 'dim-card frag'; card.style.animationDelay = (0.08 + i * 0.07) + 's';
+      const wc = dim.winner === 'civ1' ? 'dw-c1' : dim.winner === 'civ2' ? 'dw-c2' : 'dw-tie';
+      const wlbl = dim.winner === 'civ1' ? (result.civ1 || c1).split(' ')[0] : dim.winner === 'civ2' ? (result.civ2 || c2).split(' ')[0] : 'Tie';
+      card.innerHTML = '<div class="dim-name-row"><span class="dim-name"></span><span class="dim-winner-badge ' + wc + '"></span></div>'
+        + '<div class="dim-sides"><div><div class="dim-side-lbl"></div><div class="dim-side-txt"></div></div>'
+        + '<div><div class="dim-side-lbl"></div><div class="dim-side-txt"></div></div></div>'
+        + '<div class="dim-lesson-row"></div>';
+      txt(card.querySelector('.dim-name'), dim.name);
+      txt(card.querySelector('.dim-winner-badge'), wlbl);
+      const lbls = card.querySelectorAll('.dim-side-lbl');
+      txt(lbls[0], result.civ1 || c1); txt(lbls[1], result.civ2 || c2);
+      const txts = card.querySelectorAll('.dim-side-txt');
+      txt(txts[0], dim.civ1_approach); txt(txts[1], dim.civ2_approach);
+      txt(card.querySelector('.dim-lesson-row'), '\u2192 ' + dim.lesson);
+      dimCards.appendChild(card);
+    });
+    render.appendChild(dimCards);
+    if (result.synthesis && result.combined_ai) {
+      const sb1 = document.createElement('div'); sb1.className = 'synth-box frag'; sb1.style.animationDelay = '0.48s';
+      sb1.innerHTML = '<div class="synth-label">Combined lesson</div><p class="synth-desc"></p>';
+      txt(sb1.querySelector('.synth-desc'), result.synthesis); render.appendChild(sb1);
+      const sb2 = document.createElement('div'); sb2.className = 'synth-box frag'; sb2.style.animationDelay = '0.56s';
+      sb2.innerHTML = '<div class="synth-label">Combined AI Solution</div><div class="synth-title"></div><p class="synth-desc"></p>';
+      txt(sb2.querySelector('.synth-title'), result.combined_ai.name);
+      txt(sb2.querySelector('.synth-desc'), result.combined_ai.description); render.appendChild(sb2);
+    }
+  } catch(err) {
+    hideProg(progEl, barEl);
+    const d = document.createElement('div'); d.className = 'err-msg'; d.textContent = 'Comparison failed. ';
+    const b = document.createElement('button'); b.className = 'btn-retry'; b.textContent = 'Try again';
+    b.addEventListener('click', () => cmpRunBtn.click()); d.appendChild(b); statusEl.appendChild(d);
+  }
+  cmpRunBtn.disabled = false; updCmpBtn();
+});
+
+/* ============ MODULE 9: RESEARCH BRIEF GENERATOR ============ */
+const resQ      = document.getElementById('res-question');
+const resCiv    = document.getElementById('res-civ');
+const resRunBtn = document.getElementById('res-run-btn');
+function updResBtn() { resRunBtn.disabled = !(resQ.value.trim() && resCiv.value); }
+resQ.addEventListener('input', updResBtn); resCiv.addEventListener('change', updResBtn);
+
+const SYS_RES = 'You are an academic research brief generator specializing in ancient civilizations and modern AI. Return ONLY valid JSON, no markdown, no fences. Schema: {"title":string,"civilization":string,"abstract":string,"historical_context":string,"research_questions":["string","string","string"],"methodology":string,"ai_applications":string,"data_sources":string,"expected_impact":string} title: concise academic paper title. abstract: 3-4 sentences. historical_context: 2-3 sentences. research_questions: exactly 3 specific sub-questions. methodology: 2-3 sentences. ai_applications: 2-3 sentences on specific AI methods. data_sources: 2 sentences. expected_impact: 2 sentences on real-world benefit.';
+
+let currentResearch = null;
+resRunBtn.addEventListener('click', async () => {
+  const question = resQ.value.trim(), civ = resCiv.value;
+  const field = document.getElementById('res-field').value;
+  if (!question || !civ) return;
+  resRunBtn.disabled = true;
+  const out = document.getElementById('res-out'); out.classList.add('open');
+  const statusEl = document.getElementById('res-status');
+  const progEl = document.getElementById('res-prog'), barEl = document.getElementById('res-bar');
+  const render = document.getElementById('res-render');
+  const stripEl = document.getElementById('strip-res');
+  statusEl.innerHTML = ''; render.innerHTML = '';
+  if (stripEl) stripEl.textContent = rndBin(120);
+  showProg(progEl, barEl);
+  out.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  try {
+    const prompt = 'Question: ' + question + '\nCivilization: ' + civ + (field ? '\nField: ' + field : '');
+    const result = await callClaude(SYS_RES, prompt);
+    currentResearch = result;
+    hideProg(progEl, barEl); statusEl.innerHTML = '';
+    const doc = document.createElement('div'); doc.className = 'research-doc frag';
+    const dateStr = new Date().toLocaleDateString();
+    doc.innerHTML = '<div class="rdoc-eyebrow">ZHIE Research Brief</div>'
+      + '<div class="rdoc-title"></div>'
+      + '<div class="rdoc-sec"><div class="rdoc-lbl">Abstract</div><p class="rdoc-txt" id="r-abs"></p></div>'
+      + '<div class="rdoc-sec"><div class="rdoc-lbl">Historical Context</div><p class="rdoc-txt" id="r-hctx"></p></div>'
+      + '<div class="rdoc-sec"><div class="rdoc-lbl">Research Questions</div><ul class="rq-list" id="r-rqs"></ul></div>'
+      + '<div class="rdoc-sec"><div class="rdoc-lbl">Methodology</div><p class="rdoc-txt" id="r-meth"></p></div>'
+      + '<div class="rdoc-sec"><div class="rdoc-lbl">AI Applications</div><p class="rdoc-txt" id="r-ai"></p></div>'
+      + '<div class="rdoc-sec"><div class="rdoc-lbl">Data Sources</div><p class="rdoc-txt" id="r-ds"></p></div>'
+      + '<div class="rdoc-sec"><div class="rdoc-lbl">Expected Impact</div><p class="rdoc-txt" id="r-imp"></p></div>'
+      + '<div class="rdoc-footer"><span class="rdoc-meta">ZHIE \u2014 ' + civ + ' \u2014 ' + dateStr + '</span><button class="btn-copy-doc" id="res-copy-btn">Copy brief</button></div>';
+    render.appendChild(doc);
+    txt(doc.querySelector('.rdoc-title'), result.title);
+    txt(document.getElementById('r-abs'),  result.abstract);
+    txt(document.getElementById('r-hctx'), result.historical_context);
+    txt(document.getElementById('r-meth'), result.methodology);
+    txt(document.getElementById('r-ai'),   result.ai_applications);
+    txt(document.getElementById('r-ds'),   result.data_sources);
+    txt(document.getElementById('r-imp'),  result.expected_impact);
+    const rqList = document.getElementById('r-rqs');
+    (result.research_questions || []).forEach(q => {
+      const li = document.createElement('li'); li.textContent = q; rqList.appendChild(li);
+    });
+    document.getElementById('res-copy-btn').addEventListener('click', function() {
+      if (!currentResearch) return;
+      const r = currentResearch;
+      const lines = [r.title, '', 'ABSTRACT', r.abstract, '', 'HISTORICAL CONTEXT', r.historical_context, '',
+        'RESEARCH QUESTIONS', ...(r.research_questions||[]).map((q,i)=>(i+1)+'. '+q), '',
+        'METHODOLOGY', r.methodology, '', 'AI APPLICATIONS', r.ai_applications, '',
+        'DATA SOURCES', r.data_sources, '', 'EXPECTED IMPACT', r.expected_impact, '',
+        'Generated by ZHIE (Zynora Historical Intelligence Engine)'];
+      navigator.clipboard.writeText(lines.join('\n'))
+        .then(()=>{ this.textContent='Copied \u2713'; setTimeout(()=>{ this.textContent='Copy brief'; }, 2200); })
+        .catch(()=>{ this.textContent='Failed'; setTimeout(()=>{ this.textContent='Copy brief'; }, 1600); });
+    });
+  } catch(err) {
+    hideProg(progEl, barEl);
+    const d = document.createElement('div'); d.className = 'err-msg'; d.textContent = 'Research generation failed. ';
+    const b = document.createElement('button'); b.className = 'btn-retry'; b.textContent = 'Try again';
+    b.addEventListener('click', () => resRunBtn.click()); d.appendChild(b); statusEl.appendChild(d);
+  }
+  resRunBtn.disabled = false; updResBtn();
+});
+
+/* ============ MODULE 10: TIMELINE VIEW ============ */
+const TL_CIVS = [
+  {id:'mesopotamia',name:'Mesopotamia',start:-3500,end:-539,region:'mideast'},
+  {id:'indus',name:'Indus Valley',start:-3300,end:-1300,region:'southasia'},
+  {id:'egypt',name:'Egypt',start:-3100,end:-30,region:'africa'},
+  {id:'maya',name:'Maya',start:-2000,end:1500,region:'americas'},
+  {id:'greece',name:'Greece',start:-800,end:-146,region:'europe'},
+  {id:'persia',name:'Persia',start:-550,end:-330,region:'mideast'},
+  {id:'rome',name:'Rome',start:-753,end:476,region:'europe'},
+  {id:'china',name:'Imperial China',start:-206,end:907,region:'asia'},
+  {id:'axum',name:'Aksum',start:100,end:960,region:'africa'},
+  {id:'khmer',name:'Khmer',start:802,end:1431,region:'asia'},
+  {id:'zimbabwe',name:'Zimbabwe',start:1100,end:1450,region:'africa'},
+  {id:'mali',name:'Mali',start:1235,end:1600,region:'africa'},
+  {id:'benin',name:'Benin',start:1180,end:1897,region:'africa'},
+  {id:'aztec',name:'Aztec',start:1300,end:1521,region:'americas'},
+  {id:'inca',name:'Inca',start:1438,end:1533,region:'americas'}
+];
+const TL_COLORS = {
+  africa:'#C99A56', americas:'#9580C8', europe:'#4FA897',
+  mideast:'#C0533A', southasia:'#5B8DB8', asia:'#7BA05B'
+};
+const TL_REGION_LABELS = {
+  africa:'Africa', americas:'Americas', europe:'Europe & Mediterranean',
+  mideast:'Middle East', southasia:'South Asia', asia:'East / SE Asia'
+};
+const TL_S = -3500, TL_E = 1900, TL_SPAN = TL_E - TL_S;
+const BAR_H = 22, BAR_GAP = 5;
+
+function assignLanes(civs) {
+  const sorted = [...civs].sort((a,b) => a.start - b.start);
+  const laneEnds = [];
+  sorted.forEach(c => {
+    let lane = laneEnds.findIndex(e => e <= c.start - 30);
+    if (lane === -1) lane = laneEnds.length;
+    laneEnds[lane] = c.end; c.lane = lane;
+  });
+  return { civs: sorted, lanes: laneEnds.length };
+}
+
+function fmtYear(y) { return y < 0 ? Math.abs(y) + ' BCE' : (y === 0 ? '0 CE' : y + ' CE'); }
+
+let tlBuilt = false;
+function buildTimeline() {
+  if (tlBuilt) return; tlBuilt = true;
+  const canvas = document.getElementById('tl-canvas');
+  const legend = document.getElementById('tl-legend');
+  if (!canvas) return;
+  const { civs, lanes } = assignLanes(TL_CIVS.map(c => ({ ...c })));
+  const totalH = lanes * (BAR_H + BAR_GAP) + 16;
+  // Axis
+  const axisEl = document.createElement('div'); axisEl.className = 'tl-axis';
+  const axisYears = [-3000, -2000, -1000, 0, 500, 1000, 1500];
+  axisYears.forEach(y => {
+    const s = document.createElement('span');
+    s.textContent = y === 0 ? 'CE' : fmtYear(y);
+    s.style.left = ((y - TL_S) / TL_SPAN * 100).toFixed(2) + '%';
+    axisEl.appendChild(s);
+  });
+  canvas.appendChild(axisEl);
+  // Body
+  const body = document.createElement('div'); body.className = 'tl-body'; body.style.height = totalH + 'px';
+  // Grid lines
+  axisYears.forEach(y => {
+    const l = document.createElement('div'); l.className = 'tl-vline';
+    l.style.left = ((y - TL_S) / TL_SPAN * 100).toFixed(2) + '%';
+    body.appendChild(l);
+  });
+  // Bars
+  civs.forEach(civ => {
+    const leftPct  = ((civ.start - TL_S) / TL_SPAN * 100).toFixed(2);
+    const widthPct = Math.max(((civ.end - civ.start) / TL_SPAN * 100), 0.5).toFixed(2);
+    const top = 8 + civ.lane * (BAR_H + BAR_GAP);
+    const bar = document.createElement('button'); bar.className = 'civ-bar';
+    bar.style.left = leftPct + '%'; bar.style.width = widthPct + '%';
+    bar.style.top = top + 'px';
+    bar.style.background = TL_COLORS[civ.region] || '#888';
+    const tipText = civ.name + ' (' + fmtYear(civ.start) + ' \u2013 ' + fmtYear(civ.end) + ')';
+    bar.title = tipText; bar.setAttribute('aria-label', tipText + '. Tap to decode in Explorer.');
+    const lbl = document.createElement('span'); lbl.className = 'civ-bar-lbl'; lbl.textContent = civ.name;
+    bar.appendChild(lbl);
+    bar.addEventListener('click', () => {
+      switchTab('explorer');
+      const card = document.querySelector('.civ-card[data-cid="' + civ.id + '"]');
+      if (card) { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); card.click(); }
+      else { runDecode(civ.name, null); }
+    });
+    body.appendChild(bar);
+  });
+  canvas.appendChild(body);
+  // Legend
+  const seenRegions = new Set();
+  TL_CIVS.forEach(c => {
+    if (seenRegions.has(c.region)) return; seenRegions.add(c.region);
+    const item = document.createElement('div'); item.className = 'tl-leg';
+    const dot = document.createElement('div'); dot.className = 'tl-dot';
+    dot.style.background = TL_COLORS[c.region];
+    const lbl = document.createElement('span'); lbl.textContent = TL_REGION_LABELS[c.region] || c.region;
+    item.appendChild(dot); item.appendChild(lbl); legend.appendChild(item);
+  });
+}
+
+// Trigger timeline build on first click
+document.querySelectorAll('.tab-btn[data-mod="timeline"]').forEach(btn => {
+  btn.addEventListener('click', buildTimeline, { once: false });
+});
+
+
+/* ===== THEME TOGGLE ===== */
+(function(){
+  const s=localStorage.getItem('zhie-theme');
+  if(s==='light') document.documentElement.setAttribute('data-theme','light');
+})();
+(function(){
+  const btn=document.getElementById('theme-btn');
+  if(!btn) return;
+  const t=localStorage.getItem('zhie-theme');
+  btn.textContent=t==='light'?'\u263D':'\u2600';
+  btn.addEventListener('click',function(){
+    const cur=document.documentElement.getAttribute('data-theme');
+    const next=cur==='light'?'dark':'light';
+    if(next==='light') document.documentElement.setAttribute('data-theme','light');
+    else document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('zhie-theme',next);
+    this.textContent=next==='light'?'\u263D':'\u2600';
+  });
+})();
+
+/* ===== LANGUAGE TOGGLE (EN / FR) ===== */
+const I18N={
+  en:{explorer:'\u29C7 Explorer',tech:'Tech',city:'Cities',sust:'Sustain',biz:'Business',
+      edu:'Education',compare:'Compare',research:'Research',timeline:'Timeline',
+      pitch:'Pitch',heritage:'Heritage',archive:'Archive'},
+  fr:{explorer:'\u29C7 Exp.',tech:'Tech',city:'Villes',sust:'Durabilit\u00e9',biz:'Commerce',
+      edu:'\u00c9ducation',compare:'Comparer',research:'Recherche',timeline:'Chronologie',
+      pitch:'Pitch',heritage:'Patrimoine',archive:'Archives'}
+};
+let curLang=localStorage.getItem('zhie-lang')||'en';
+function applyLang(lang){
+  curLang=lang;
+  localStorage.setItem('zhie-lang',lang);
+  const map=I18N[lang]||I18N.en;
+  document.querySelectorAll('.tab-btn').forEach(btn=>{
+    const mod=btn.dataset.mod;
+    const lbl=map[mod];
+    if(!lbl) return;
+    const badge=btn.querySelector('.tab-ct');
+    btn.textContent=lbl;
+    if(badge) btn.appendChild(badge);
+  });
+  const lb=document.getElementById('lang-btn');
+  if(lb) lb.textContent=lang.toUpperCase();
+}
+(function(){
+  const lb=document.getElementById('lang-btn');
+  if(!lb) return;
+  lb.addEventListener('click',()=>applyLang(curLang==='en'?'fr':'en'));
+  applyLang(curLang);
+})();
+
+/* ===== SHARE ROW ===== */
+function showShareFor(report){
+  const row=document.getElementById('share-row');
+  if(!row) return;
+  row.classList.add('on');
+  function shareText(){
+    return '\u29C7 ZHIE Report: '+report.civilization+' ('+report.era+')\n\n'
+      +'AI Innovations:\n'+(report.innovations||[]).map(i=>'\u2022 '+i.name+': '+i.description).join('\n')
+      +'\n\nGenerated by ZHIE \u2014 Zynora Historical Intelligence Engine';
+  }
+  const wa=document.getElementById('s-wa');
+  const tw=document.getElementById('s-tw');
+  const li=document.getElementById('s-li');
+  if(wa) wa.onclick=()=>window.open('https://wa.me/?text='+encodeURIComponent(shareText()),'_blank');
+  if(tw) tw.onclick=()=>window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(
+    '\u29C7 Just decoded '+report.civilization+' on ZHIE!\n\n'
+    +(report.innovations||[]).slice(0,2).map(i=>'\u2022 '+i.name).join('\n')
+    +'\n\n#ZHIE #AIHistory #Africa #Innovation'),'_blank');
+  if(li) li.onclick=()=>window.open('https://www.linkedin.com/sharing/share-offsite/?url='+encodeURIComponent('https://zhie.app'),'_blank');
+}
+
+/* ===== MODULE 11: INNOVATION PITCH GENERATOR ===== */
+const pitchCiv=document.getElementById('pitch-civ');
+const pitchBtn=document.getElementById('pitch-run-btn');
+pitchCiv.addEventListener('change',()=>{pitchBtn.disabled=!pitchCiv.value;});
+
+const SYS_PITCH='You are a startup pitch analyst and innovation coach. Return ONLY valid JSON, no markdown, no fences. Given a civilization, startup category, and target market, generate a full investor-ready startup pitch for an AI-powered business that directly applies the civilization\'s specific historical practices. Schema: {"company_name":string,"tagline":string,"civilization_inspiration":string,"problem":string,"solution":string,"historical_parallel":string,"revenue_model":string,"market_opportunity":string,"competitive_advantage":string,"mvp_features":["string","string","string"],"team_skills":string,"africa_angle":string} company_name: original name inspired by the civilization. tagline: one punchy line under 10 words. civilization_inspiration: which specific practice is adapted (1-2 sentences). problem: modern problem (2-3 sentences). solution: AI product (2-3 sentences). historical_parallel: how ancient method maps to product (1-2 sentences). revenue_model: 1-2 sentences. market_opportunity: TAM and rationale (1-2 sentences). competitive_advantage: uniquely better than alternatives (1-2 sentences). mvp_features: exactly 3 specific features. team_skills: founding team needed (1-2 sentences). africa_angle: specific African market opportunity (2 sentences).';
+
+pitchBtn.addEventListener('click',async()=>{
+  const civ=pitchCiv.value;
+  const cat=document.getElementById('pitch-cat').value;
+  const mkt=document.getElementById('pitch-market').value;
+  if(!civ) return;
+  pitchBtn.disabled=true;
+  const out=document.getElementById('pitch-out'); out.classList.add('open');
+  const stEl=document.getElementById('pitch-status');
+  const pEl=document.getElementById('pitch-prog'),bEl=document.getElementById('pitch-bar');
+  const render=document.getElementById('pitch-render');
+  const strEl=document.getElementById('strip-pitch');
+  stEl.innerHTML=''; render.innerHTML='';
+  if(strEl) strEl.textContent=rndBin(120);
+  showProg(pEl,bEl);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const prompt='Civilization: '+civ+(cat?'\nCategory: '+cat:'')+(mkt?'\nMarket: '+mkt:'');
+    const r=await callClaude(SYS_PITCH,prompt);
+    hideProg(pEl,bEl); stEl.innerHTML='';
+
+    const banner=document.createElement('div'); banner.className='pitch-banner frag';
+    banner.innerHTML='<div class="pitch-co"></div><div class="pitch-tl"></div><div class="pitch-inspo"></div>';
+    txt(banner.querySelector('.pitch-co'),r.company_name);
+    txt(banner.querySelector('.pitch-tl'),'\u201c'+r.tagline+'\u201d');
+    txt(banner.querySelector('.pitch-inspo'),'\u29C7 Inspired by '+civ+': '+r.civilization_inspiration);
+    render.appendChild(banner);
+
+    const grid=document.createElement('div'); grid.className='pitch-grid';
+    [
+      {l:'Problem',           k:'problem'},
+      {l:'Solution',          k:'solution'},
+      {l:'Historical Parallel',k:'historical_parallel'},
+      {l:'Revenue Model',     k:'revenue_model'},
+      {l:'Market Opportunity',k:'market_opportunity'},
+      {l:'Competitive Edge',  k:'competitive_advantage'},
+      {l:'Team Skills',       k:'team_skills'}
+    ].forEach((f,i)=>{
+      const c=document.createElement('div'); c.className='pitch-card frag';
+      c.style.animationDelay=(0.06+i*0.055)+'s';
+      c.innerHTML='<div class="pc-lbl"></div><div class="pc-txt"></div>';
+      txt(c.querySelector('.pc-lbl'),f.l); txt(c.querySelector('.pc-txt'),r[f.k]||'');
+      grid.appendChild(c);
+    });
+
+    const mvpC=document.createElement('div'); mvpC.className='pitch-card frag';
+    mvpC.style.animationDelay='0.46s';
+    mvpC.innerHTML='<div class="pc-lbl">MVP Features</div><ul class="mvp-list"></ul>';
+    const mvpUl=mvpC.querySelector('.mvp-list');
+    (r.mvp_features||[]).forEach(f=>{const li=document.createElement('li');li.textContent=f;mvpUl.appendChild(li);});
+    grid.appendChild(mvpC);
+    render.appendChild(grid);
+
+    if(r.africa_angle){
+      const af=document.createElement('div'); af.className='pitch-af frag'; af.style.animationDelay='0.6s';
+      af.innerHTML='<div class="pitch-af-lbl">\u2316 Africa Market Angle</div><div class="pitch-af-txt"></div>';
+      txt(af.querySelector('.pitch-af-txt'),r.africa_angle);
+      render.appendChild(af);
+    }
+    toast('\u29C7 '+r.company_name+' pitch generated');
+  }catch(err){
+    hideProg(pEl,bEl);
+    const d=document.createElement('div'); d.className='err-msg'; d.textContent='Pitch failed. ';
+    const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+    b.addEventListener('click',()=>pitchBtn.click()); d.appendChild(b); stEl.appendChild(d);
+  }
+  pitchBtn.disabled=false;
+});
+
+/* ===== MODULE 12: CULTURAL HERITAGE VAULT ===== */
+const herPr=document.getElementById('her-practice');
+const herBtn=document.getElementById('her-run-btn');
+herPr.addEventListener('input',()=>{herBtn.disabled=!herPr.value.trim();});
+
+const SYS_HER='You are an AI cultural heritage analyst with expertise in UNESCO endangered practices and African traditions. Return ONLY valid JSON, no markdown, no fences. Analyze the given cultural practice and generate a comprehensive preservation and revival strategy. Schema: {"practice":string,"region":string,"estimated_practitioners":string,"historical_roots":string,"risk_level":"critical"|"endangered"|"vulnerable"|"stable","risk_factors":string,"similar_civilizations":[{"name":string,"practice":string,"lesson":string},{"name":string,"practice":string,"lesson":string}],"ai_tools":["string","string","string","string"],"digitization_strategy":string,"community_plan":string,"revival_roadmap":string} estimated_practitioners: rough estimate. historical_roots: 2-3 sentences. risk_factors: 2-3 sentences. similar_civilizations: 2 ancient civilizations with analogous practices and what happened to them. ai_tools: 4 specific AI technologies for preservation. digitization_strategy: 2-3 sentences. community_plan: 2-3 sentences on community-centered approach. revival_roadmap: 2-3 sentences 3-5 year plan.';
+
+herBtn.addEventListener('click',async()=>{
+  const practice=herPr.value.trim();
+  const region=document.getElementById('her-region').value;
+  const urgency=document.getElementById('her-urgency').value;
+  if(!practice) return;
+  herBtn.disabled=true;
+  const out=document.getElementById('her-out'); out.classList.add('open');
+  const stEl=document.getElementById('her-status');
+  const pEl=document.getElementById('her-prog'),bEl=document.getElementById('her-bar');
+  const render=document.getElementById('her-render');
+  const strEl=document.getElementById('strip-her');
+  stEl.innerHTML=''; render.innerHTML='';
+  if(strEl) strEl.textContent=rndBin(120);
+  showProg(pEl,bEl);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const prompt='Practice: '+practice+(region?'\nRegion: '+region:'')+(urgency?'\nUrgency: '+urgency:'');
+    const r=await callClaude(SYS_HER,prompt);
+    hideProg(pEl,bEl); stEl.innerHTML='';
+
+    const rl=(r.risk_level||'vulnerable').toLowerCase();
+    const banner=document.createElement('div'); banner.className='her-banner frag';
+    banner.innerHTML='<div class="her-pname"></div><div class="her-region"></div>'
+      +'<div class="her-est"></div>'
+      +'<div class="risk-pill rl-'+rl+'"><div class="risk-dot"></div><span class="risk-lbl"></span></div>';
+    txt(banner.querySelector('.her-pname'),r.practice||practice);
+    txt(banner.querySelector('.her-region'),r.region||(region||'Region unknown'));
+    txt(banner.querySelector('.her-est'),'Est. practitioners: '+(r.estimated_practitioners||'Unknown'));
+    txt(banner.querySelector('.risk-lbl'),rl.toUpperCase()+' RISK');
+    render.appendChild(banner);
+
+    const grid2=document.createElement('div'); grid2.className='pitch-grid';
+    [
+      {l:'Historical Roots',        k:'historical_roots'},
+      {l:'Risk Factors',            k:'risk_factors'},
+      {l:'Digitization Strategy',   k:'digitization_strategy'},
+      {l:'Community-First Plan',    k:'community_plan'},
+      {l:'3\u20135 Year Revival Roadmap',k:'revival_roadmap'}
+    ].forEach((s,i)=>{
+      const c=document.createElement('div'); c.className='pitch-card frag';
+      c.style.animationDelay=(0.07+i*0.065)+'s';
+      c.innerHTML='<div class="pc-lbl"></div><div class="pc-txt"></div>';
+      txt(c.querySelector('.pc-lbl'),s.l); txt(c.querySelector('.pc-txt'),r[s.k]||'');
+      grid2.appendChild(c);
+    });
+
+    const toolC=document.createElement('div'); toolC.className='pitch-card frag';
+    toolC.style.animationDelay='0.44s';
+    toolC.innerHTML='<div class="pc-lbl">AI Preservation Tools</div><div class="ai-tools-row" id="ai-tools-row-'+Date.now()+'"></div>';
+    const toolRow=toolC.querySelector('.ai-tools-row');
+    (r.ai_tools||[]).forEach(t=>{
+      const ch=document.createElement('span'); ch.className='ai-tool-chip'; ch.textContent=t; toolRow.appendChild(ch);
+    });
+    grid2.appendChild(toolC);
+    render.appendChild(grid2);
+
+    if(r.similar_civilizations&&r.similar_civilizations.length){
+      const sc_lbl=document.createElement('p'); sc_lbl.className='eyebrow'; sc_lbl.style.marginTop='1.4rem';
+      sc_lbl.textContent='Historical precedents'; render.appendChild(sc_lbl);
+      const scg=document.createElement('div'); scg.className='sim-grid';
+      r.similar_civilizations.forEach((sc,i)=>{
+        const c=document.createElement('div'); c.className='sim-card frag'; c.style.animationDelay=(0.5+i*0.08)+'s';
+        c.innerHTML='<div class="sim-civ"></div><div class="sim-pr"></div><p class="sim-lesson"></p>';
+        txt(c.querySelector('.sim-civ'),sc.name); txt(c.querySelector('.sim-pr'),sc.practice);
+        txt(c.querySelector('.sim-lesson'),sc.lesson);
+        scg.appendChild(c);
+      });
+      render.appendChild(scg);
+    }
+    toast('\u29C7 Heritage analysis complete');
+  }catch(err){
+    hideProg(pEl,bEl);
+    const d=document.createElement('div'); d.className='err-msg'; d.textContent='Analysis failed. ';
+    const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+    b.addEventListener('click',()=>herBtn.click()); d.appendChild(b); stEl.appendChild(d);
+  }
+  herBtn.disabled=false;
+});
+
+/* ============ INIT ============ */
+arcLoad();
+
+</script>
+</body>
+</html>
