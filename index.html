@@ -1409,10 +1409,10 @@ bizRunBtn.addEventListener('click',async()=>{
       const bg=(idea,idx)=>(idea[BK[idx]]!==undefined&&idea[BK[idx]]!==null)?idea[BK[idx]]:(Object.values(idea)[idx]||'');
       txt(card.querySelector('.biz-name'),bg(idea,0));
       txt(card.querySelector('.biz-tag'),'\u201c'+bg(idea,1)+'\u201d');
-      txt(document.getElementById('b-prob-'+i),bg(idea,2));
-      txt(document.getElementById('b-hist-'+i),bg(idea,3));
-      txt(document.getElementById('b-rev-'+i),bg(idea,4));
-      txt(document.getElementById('b-af-'+i),'\u2316 Africa: '+bg(idea,5));
+      txt(card.querySelector('#b-prob-'+i),bg(idea,2));
+      txt(card.querySelector('#b-hist-'+i),bg(idea,3));
+      txt(card.querySelector('#b-rev-'+i),bg(idea,4));
+      txt(card.querySelector('#b-af-'+i),'\u2316 Africa: '+bg(idea,5));
       grid.appendChild(card);
     });
   }catch(err){
