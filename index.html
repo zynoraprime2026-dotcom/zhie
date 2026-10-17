@@ -992,14 +992,21 @@ function arcRender(){
 async function callClaude(system,userMsg){
   const res=await fetch('https://noor-api-zynora1.vercel.app/api/ai/chat',{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({system:system+LANG_DIRECTIVE(),messages:[{role:'user',content:userMsg}],maxTokens:1600})
+    body:JSON.stringify({system:system+LANG_DIRECTIVE(),messages:[{role:'user',content:userMsg}],maxTokens:2400})
   });
   if(!res.ok) throw new Error('HTTP '+res.status);
   const data=await res.json();
   const tb=(data.text!==undefined)?{text:data.text}:null;
   if(!tb) throw new Error('No text block');
-  const raw=tb.text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
-  const parsed=JSON.parse(raw);
+  let parsed=null;
+  const raw=tb.text.trim();
+  try{ parsed=JSON.parse(raw); }catch(e){
+    const t=raw.replace(/```json/gi,'').replace(/```/g,'');
+    const s=t.indexOf('{'), z=t.lastIndexOf('}');
+    if(s!==-1&&z>s){ try{ parsed=JSON.parse(t.slice(s,z+1)); }catch(e2){ parsed=null; } }
+  }
+  if(!parsed&&arguments.length<3) return callClaude(system,userMsg,1);
+  if(!parsed) throw new Error('Invalid JSON');
   window.ZHIE_LAST={result:parsed,user:userMsg};
   return parsed;
 }
@@ -1398,12 +1405,14 @@ bizRunBtn.addEventListener('click',async()=>{
         +'<div class="biz-sec"><div class="biz-lbl">Historical parallel</div><div class="biz-txt" id="b-hist-'+i+'"></div></div>'
         +'<div class="biz-sec"><div class="biz-lbl">Revenue model</div><div class="biz-txt" id="b-rev-'+i+'"></div></div>'
         +'<div class="africa-pill" id="b-af-'+i+'"></div>';
-      txt(card.querySelector('.biz-name'),idea.name);
-      txt(card.querySelector('.biz-tag'),'\u201c'+idea.tagline+'\u201d');
-      txt(document.getElementById('b-prob-'+i),idea.problem);
-      txt(document.getElementById('b-hist-'+i),idea.historical_parallel);
-      txt(document.getElementById('b-rev-'+i),idea.revenue_model);
-      txt(document.getElementById('b-af-'+i),'\u2316 Africa: '+idea.africa_opportunity);
+      const BK=['name','tagline','problem','historical_parallel','revenue_model','africa_opportunity'];
+      const bg=(idea,idx)=>(idea[BK[idx]]!==undefined&&idea[BK[idx]]!==null)?idea[BK[idx]]:(Object.values(idea)[idx]||'');
+      txt(card.querySelector('.biz-name'),bg(idea,0));
+      txt(card.querySelector('.biz-tag'),'\u201c'+bg(idea,1)+'\u201d');
+      txt(document.getElementById('b-prob-'+i),bg(idea,2));
+      txt(document.getElementById('b-hist-'+i),bg(idea,3));
+      txt(document.getElementById('b-rev-'+i),bg(idea,4));
+      txt(document.getElementById('b-af-'+i),'\u2316 Africa: '+bg(idea,5));
       grid.appendChild(card);
     });
   }catch(err){
@@ -1794,8 +1803,8 @@ function applyLang(lang){
 
 /* ===== v3.1 FEATURE SUITE: Swahili + PWA + API + Collaboration ===== */
 function LANG_DIRECTIVE(){
-  if(curLang==='sw') return ' IMPORTANT: Write every human-readable string VALUE in Swahili (Kiswahili). Keep all JSON keys exactly as specified in the schema.';
-  if(curLang==='fr') return ' IMPORTANT: Write every human-readable string VALUE in French. Keep all JSON keys exactly as specified in the schema.';
+  if(curLang==='sw') return ' IMPORTANT: Write every human-readable string VALUE in Swahili (Kiswahili). CRITICAL: keep all JSON keys exactly as specified in the schema, in English, never translated or renamed. Output ONLY the JSON object, with nothing before or after it.';
+  if(curLang==='fr') return ' IMPORTANT: Write every human-readable string VALUE in French. CRITICAL: keep all JSON keys exactly as specified in the schema, in English, never translated or renamed. Output ONLY the JSON object, with nothing before or after it.';
   return '';
 }
 const fmWrap=document.getElementById('fm-wrap');
