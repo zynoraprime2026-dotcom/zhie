@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ZHIE — Zynora Historical Intelligence Engine</title>
+<meta name="theme-color" content="#12110D">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -146,6 +149,18 @@ nav .inner{width:100%;max-width:1100px;margin:0 auto;padding:0 1.25rem;display:f
 .btn-retry:hover{background:rgba(192,83,58,0.1);}
 
 /* TOAST */
+.fm-wrap{position:fixed;inset:0;z-index:300;background:rgba(10,9,6,0.86);display:flex;align-items:center;justify-content:center;padding:1rem;}
+.fm-card{position:relative;background:var(--ink2);border:1px solid var(--line);border-radius:8px;max-width:560px;width:100%;max-height:82vh;overflow-y:auto;padding:1.4rem 1.3rem;}
+.fm-close{position:absolute;top:0.5rem;right:0.6rem;background:none;border:none;color:var(--bone2);font-size:1.5rem;cursor:pointer;line-height:1;}
+.fm-close:hover{color:var(--gold);}
+.fm-title{font-family:var(--ff-m);font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin:0 0 0.9rem;padding-right:1.5rem;}
+.fm-txt{font-family:var(--ff-b);font-size:0.85rem;color:var(--bone);line-height:1.65;margin-bottom:0.8rem;}
+.fm-code{font-family:var(--ff-m);font-size:0.66rem;color:var(--teal);background:var(--ink);border:1px solid var(--line);border-radius:6px;padding:0.7rem 0.8rem;white-space:pre-wrap;word-break:break-word;margin-bottom:0.6rem;text-align:left;}
+.fm-btn{font-family:var(--ff-m);font-size:0.66rem;letter-spacing:0.06em;background:var(--stone);color:var(--gold);border:1px solid var(--gold2);border-radius:5px;padding:0.45rem 0.8rem;cursor:pointer;margin:0.25rem 0.4rem 0.25rem 0;}
+.fm-btn:hover{background:var(--ink);}
+.fm-kv{border:1px solid var(--line);border-radius:6px;padding:0.7rem 0.8rem;margin-bottom:0.6rem;background:var(--ink);}
+.fm-k{font-family:var(--ff-m);font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);margin-bottom:0.25rem;}
+.fm-v{font-family:var(--ff-b);font-size:0.82rem;color:var(--bone);line-height:1.55;white-space:pre-wrap;}
 #toast-wrap{position:fixed;bottom:5rem;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;align-items:center;gap:0.4rem;pointer-events:none;width:calc(100% - 2rem);max-width:320px;}
 .toast{font-family:var(--ff-m);font-size:0.72rem;padding:0.52rem 1rem;border-radius:20px;background:var(--stone);border:1px solid var(--teal2);color:var(--teal);white-space:nowrap;opacity:0;animation:t-in 0.2s ease-out forwards,t-out 0.2s ease-in 2s forwards;}
 @keyframes t-in{to{opacity:1;transform:none;}}
@@ -248,6 +263,8 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
 .roadmap h4{font-family:var(--ff-m);font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);margin-bottom:0.65rem;}
 .roadmap-tags{line-height:1.9;}
 .roadmap-tags span{display:inline-block;font-family:var(--ff-m);font-size:0.63rem;letter-spacing:0.04em;color:var(--bone2);border:1px solid var(--line);border-radius:12px;padding:0.25rem 0.6rem;margin:0 0.35rem 0.35rem 0;white-space:nowrap;}
+.roadmap-tags button{display:inline-block;font-family:var(--ff-m);font-size:0.63rem;letter-spacing:0.04em;color:var(--bone2);background:transparent;border:1px solid var(--line);border-radius:12px;padding:0.25rem 0.6rem;margin:0 0.35rem 0.35rem 0;white-space:nowrap;cursor:pointer;}
+.roadmap-tags button:hover{border-color:var(--gold);color:var(--gold);}
 
 /* SCROLL TOP */
 #go-top{position:fixed;bottom:1.4rem;right:1.2rem;z-index:50;width:2.3rem;height:2.3rem;border-radius:50%;background:var(--stone);border:1px solid var(--line);color:var(--bone2);font-size:1rem;display:none;align-items:center;justify-content:center;transition:background 0.13s,color 0.13s;}
@@ -403,7 +420,7 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
     <div class="nav-controls">
       <button class="nav-icon-btn" id="lang-btn" title="Language / Langue">EN</button>
       <button class="nav-icon-btn" id="theme-btn" aria-label="Toggle theme">&#9788;</button>
-      <div class="nav-v">v3</div>
+      <div class="nav-v">v3.1</div>
     </div>
   </div>
 </nav>
@@ -835,17 +852,24 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
         <p class="foot-sub">AI-generated reports should be verified against primary sources for serious research. Powered by Groq GPT-OSS 120B through the Noor API. Africa-first design philosophy.</p>
       </div>
       <div class="roadmap">
-        <h4>Coming next</h4>
+        <h4>Now live — tap to use</h4>
         <div class="roadmap-tags">
-          <span>Language Support (Swahili)</span>
-          <span>Offline Mode (PWA)</span>
-          <span>API Access</span>
-          <span>Collaboration Mode</span>
+          <button type="button" id="chip-lang">Language Support (Swahili)</button>
+          <button type="button" id="chip-off">Offline Mode (PWA)</button>
+          <button type="button" id="chip-api">API Access</button>
+          <button type="button" id="chip-collab">Collaboration Mode</button>
         </div>
       </div>
     </div>
   </div>
 </footer>
+
+<div id="fm-wrap" class="fm-wrap" hidden>
+  <div class="fm-card" role="dialog" aria-modal="true">
+    <button class="fm-close" id="fm-close" aria-label="Close">&times;</button>
+    <div id="fm-body"></div>
+  </div>
+</div>
 
 <div id="toast-wrap" aria-live="assertive" aria-atomic="true"></div>
 <button id="go-top" aria-label="Back to top">&#8593;</button>
@@ -967,14 +991,16 @@ function arcRender(){
 async function callClaude(system,userMsg){
   const res=await fetch('https://noor-api-zynora1.vercel.app/api/ai/chat',{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({system,messages:[{role:'user',content:userMsg}],maxTokens:1600})
+    body:JSON.stringify({system:system+LANG_DIRECTIVE(),messages:[{role:'user',content:userMsg}],maxTokens:1600})
   });
   if(!res.ok) throw new Error('HTTP '+res.status);
   const data=await res.json();
   const tb=(data.text!==undefined)?{text:data.text}:null;
   if(!tb) throw new Error('No text block');
   const raw=tb.text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/,'').replace(/\s*```$/,'').trim();
-  return JSON.parse(raw);
+  const parsed=JSON.parse(raw);
+  window.ZHIE_LAST={result:parsed,user:userMsg};
+  return parsed;
 }
 
 /* ============ MODULE 1: EXPLORER ============ */
@@ -1737,7 +1763,10 @@ const I18N={
       pitch:'Pitch',heritage:'Heritage',archive:'Archive'},
   fr:{explorer:'\u29C7 Exp.',tech:'Tech',city:'Villes',sust:'Durabilit\u00e9',biz:'Commerce',
       edu:'\u00c9ducation',compare:'Comparer',research:'Recherche',timeline:'Chronologie',
-      pitch:'Pitch',heritage:'Patrimoine',archive:'Archives'}
+      pitch:'Pitch',heritage:'Patrimoine',archive:'Archives'},
+  sw:{explorer:'\u29C7 Msafiri',tech:'Teknolojia',city:'Miji',sust:'Udumishu',biz:'Biashara',
+      edu:'Elimu',compare:'Linganisha',research:'Utafiti',timeline:'Mstari wa Wakati',
+      pitch:'Wasilisho',heritage:'Urithi',archive:'Kumbukumbu'}
 };
 let curLang=localStorage.getItem('zhie-lang')||'en';
 function applyLang(lang){
@@ -1758,9 +1787,88 @@ function applyLang(lang){
 (function(){
   const lb=document.getElementById('lang-btn');
   if(!lb) return;
-  lb.addEventListener('click',()=>applyLang(curLang==='en'?'fr':'en'));
+  lb.addEventListener('click',()=>applyLang(curLang==='en'?'sw':(curLang==='sw'?'fr':'en')));
   applyLang(curLang);
 })();
+
+/* ===== v3.1 FEATURE SUITE: Swahili + PWA + API + Collaboration ===== */
+function LANG_DIRECTIVE(){
+  if(curLang==='sw') return ' IMPORTANT: Write every human-readable string VALUE in Swahili (Kiswahili). Keep all JSON keys exactly as specified in the schema.';
+  if(curLang==='fr') return ' IMPORTANT: Write every human-readable string VALUE in French. Keep all JSON keys exactly as specified in the schema.';
+  return '';
+}
+const fmWrap=document.getElementById('fm-wrap');
+const fmBody=document.getElementById('fm-body');
+function openModal(html){ fmBody.innerHTML=html; fmWrap.hidden=false; document.body.style.overflow='hidden'; }
+function closeModal(){ fmWrap.hidden=true; document.body.style.overflow=''; }
+document.getElementById('fm-close').addEventListener('click',closeModal);
+fmWrap.addEventListener('click',(e)=>{ if(e.target===fmWrap) closeModal(); });
+
+const chipLang=document.getElementById('chip-lang');
+if(chipLang) chipLang.addEventListener('click',()=>{ applyLang(curLang==='en'?'sw':(curLang==='sw'?'fr':'en')); toast(curLang==='sw'?'Lugha: Kiswahili \u2014 AI inajibu kwa Kiswahili':(curLang==='fr'?'Langue: Fran\u00e7ais':'Language: English')); });
+
+const chipOff=document.getElementById('chip-off');
+if(chipOff) chipOff.addEventListener('click',async()=>{
+  if(!('serviceWorker' in navigator)){ openModal('<h3 class="fm-title">Offline Mode</h3><p class="fm-txt">This browser does not support offline mode (no service worker).</p>'); return; }
+  const reg=await navigator.serviceWorker.getRegistration();
+  if(reg&&(reg.active||reg.installing)){ openModal('<h3 class="fm-title">Offline Mode \u2014 Active</h3><p class="fm-txt">ZHIE is saved on this device. The full interface opens without internet; analyses need a connection. You can also install it: browser menu \u2192 \u201cAdd to Home Screen\u201d / \u201cInstall app\u201d.</p>'); }
+  else{ try{ await navigator.serviceWorker.register('sw.js'); toast('\u2713 Offline mode enabled \u2014 ZHIE saved on this device'); }catch(e){ toast('Offline setup failed on this browser'); } }
+});
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator.serviceWorker.register('sw.js').catch(()=>{}); }); }
+
+const chipApi=document.getElementById('chip-api');
+if(chipApi) chipApi.addEventListener('click',()=>{
+  const ep='https://noor-api-zynora1.vercel.app/api/ai/chat';
+  const curl="curl -X POST "+ep+" \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"system\":\"You are a historical technology analysis engine. Return ONLY valid JSON\",\"messages\":[{\"role\":\"user\",\"content\":\"Construction\"}],\"maxTokens\":1600}'";
+  openModal('<h3 class="fm-title">ZHIE API Access</h3>'
+    +'<p class="fm-txt">Every ZHIE analysis is a single POST \u2014 build your own tools on top of it. Replace the system prompt with any of ZHIE\u2019s analysis schemas (Explorer, Tech, Cities, Sustain, Business, Heritage, Pitch) and parse the JSON reply.</p>'
+    +'<div class="fm-code">POST '+ep+'</div>'
+    +'<p class="fm-txt">Request body:</p><div class="fm-code">{"system": "analysis engine instruction", "messages": [{"role":"user","content":"your topic"}], "maxTokens": 1600}</div>'
+    +'<p class="fm-txt">Response:</p><div class="fm-code">{"text": "<JSON analysis>"}</div>'
+    +'<button class="fm-btn" id="fm-copy">Copy curl example</button>'
+    +'<button class="fm-btn" id="fm-doc">Download API docs</button>');
+  document.getElementById('fm-copy').onclick=()=>{ navigator.clipboard.writeText(curl.replace(/\\n/g,'\n')); toast('Copied \u2014 paste in any terminal'); };
+  document.getElementById('fm-doc').onclick=()=>{ const blob=new Blob(["ZHIE API\n======\n\nEndpoint: POST "+ep+"\n\nRequest:  {system, messages, maxTokens}\nResponse: {text: <JSON string>}\n\nThe system prompt is the analysis engine instruction (any ZHIE module schema).\nFree during beta; verify AI reports against primary sources.\n"],{type:'text/plain'}); const l=document.createElement('a'); l.href=URL.createObjectURL(blob); l.download='zhie-api.txt'; l.click(); };
+});
+
+const chipCollab=document.getElementById('chip-collab');
+function reportTitle(r){
+  if(!r||typeof r!=='object') return 'ZHIE report';
+  const keys=['civilization','domain','cityName','company_name','challenge','practice'];
+  for(const k of keys){ if(r[k]) return String(r[k]); }
+  return 'ZHIE report';
+}
+function renderReport(r){
+  let h='<h3 class="fm-title">Shared report \u2014 '+reportTitle(r)+'</h3>';
+  for(const entry of Object.entries(r||{})){
+    const k=entry[0], v=entry[1];
+    if(typeof v==='string'){ h+='<div class="fm-kv"><div class="fm-k">'+k.replace(/_/g,' ')+'</div><div class="fm-v">'+v+'</div></div>'; }
+    else if(Array.isArray(v)){
+      h+='<div class="fm-kv"><div class="fm-k">'+k.replace(/_/g,' ')+'</div>';
+      v.forEach((it)=>{ h+='<div class="fm-v" style="margin-bottom:0.45rem;">\u2022 '+(typeof it==='string'?it:(it&&typeof it==='object'?Object.keys(it).map((ik)=>it[ik]).join(' \u2014 '):String(it)))+'</div>'; });
+      h+='</div>';
+    } else if(v&&typeof v==='object'){ h+='<div class="fm-kv"><div class="fm-k">'+k.replace(/_/g,' ')+'</div><div class="fm-v">'+Object.entries(v).map((p)=>p[0].replace(/_/g,' ')+': '+(Array.isArray(p[1])?p[1].join(', '):String(p[1]))).join('\n')+'</div></div>'; }
+  }
+  return h;
+}
+if(chipCollab) chipCollab.addEventListener('click',()=>{
+  const last=window.ZHIE_LAST;
+  openModal('<h3 class="fm-title">Collaboration Mode</h3>'
+    +(last
+      ? '<p class="fm-txt">Share your latest analysis \u2014 \u201c'+reportTitle(last.result)+'\u201d \u2014 with colleagues, or open a report someone shared with you.</p>'
+      : '<p class="fm-txt">Run any analysis first to export it, or open a report file someone shared with you.</p>')
+    +(last?'<button class="fm-btn" id="collab-export">\u2193 Download report (.json)</button>':'')
+    +(last?'<button class="fm-btn" id="collab-wa">\u2706 Share on WhatsApp</button>':'')
+    +'<button class="fm-btn" id="collab-import">\u2191 Open shared report</button>'
+    +'<input type="file" id="collab-file" accept="application/json,.json" style="display:none">');
+  if(last){
+    document.getElementById('collab-export').onclick=()=>{ const blob=new Blob([JSON.stringify({zhie_report:last.result},null,2)],{type:'application/json'}); const l=document.createElement('a'); l.href=URL.createObjectURL(blob); l.download='zhie-report.json'; l.click(); toast('\u2193 Report downloaded \u2014 send the file to a colleague'); };
+    document.getElementById('collab-wa').onclick=()=>{ window.open('https://wa.me/?text='+encodeURIComponent('\u29C7 ZHIE report: '+reportTitle(last.result)+'\n\n'+JSON.stringify(last.result,null,1).slice(0,3500)+'\n\nShared from ZHIE'),'_blank'); };
+  }
+  const fi=document.getElementById('collab-file');
+  document.getElementById('collab-import').onclick=()=>fi.click();
+  fi.onchange=()=>{ const f=fi.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ const j=JSON.parse(rd.result); openModal(renderReport(j.zhie_report||j)); }catch(e){ toast('That file is not a valid ZHIE report'); } }; rd.readAsText(f); };
+});
 
 /* ===== SHARE ROW ===== */
 function showShareFor(report){
