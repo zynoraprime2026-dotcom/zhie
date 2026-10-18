@@ -184,6 +184,55 @@ nav .inner{width:100%;max-width:1100px;margin:0 auto;padding:0 1.25rem;display:f
 .hist-item:hover{border-color:var(--gold2);}
 .hist-t{font-family:var(--ff-m);font-size:0.78rem;color:var(--bone);}
 .hist-d{font-family:var(--ff-m);font-size:0.66rem;color:var(--bone2);margin-top:0.15rem;}
+/* ===== QUIZ MODULE ===== */
+#quiz-out{display:none;margin-top:1.8rem;}#quiz-out.open{display:block;}
+.quiz-progress{display:flex;align-items:center;gap:0.7rem;margin-bottom:1.2rem;}
+.quiz-prog-bar{flex:1;height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
+.quiz-prog-fill{height:100%;background:var(--teal);border-radius:2px;transition:width 0.4s ease;}
+.quiz-prog-txt{font-family:var(--ff-m);font-size:0.68rem;color:var(--bone2);white-space:nowrap;flex-shrink:0;}
+.quiz-q-box{background:var(--stone);border:1px solid var(--line);border-radius:8px;padding:1.4rem 1.5rem;}
+.quiz-q-num{font-family:var(--ff-m);font-size:0.62rem;color:var(--teal);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem;}
+.quiz-q-txt{font-family:var(--ff-d);font-size:clamp(0.98rem,2.8vw,1.2rem);color:var(--bone);line-height:1.45;}
+.quiz-opts{display:flex;flex-direction:column;gap:0.48rem;margin-top:1.2rem;}
+.quiz-opt{background:var(--ink2);border:1px solid var(--line);border-radius:5px;padding:0.8rem 0.95rem;text-align:left;color:var(--bone);font-family:var(--ff-b);font-size:0.87rem;cursor:pointer;transition:border-color 0.13s,background 0.13s;display:flex;align-items:flex-start;gap:0.65rem;line-height:1.5;}
+.quiz-opt:hover:not(:disabled){border-color:var(--teal);background:rgba(79,168,151,0.07);}
+.quiz-opt:disabled{cursor:default;}
+.quiz-opt.q-correct{border-color:var(--teal)!important;background:rgba(79,168,151,0.11)!important;}
+.quiz-opt.q-wrong{border-color:var(--rust)!important;background:rgba(192,83,58,0.09)!important;}
+.quiz-opt-ltr{font-family:var(--ff-m);font-size:0.68rem;color:var(--bone2);flex-shrink:0;margin-top:0.1rem;min-width:1rem;}
+.quiz-opt.q-correct .quiz-opt-ltr{color:var(--teal);}
+.quiz-opt.q-wrong   .quiz-opt-ltr{color:var(--rust);}
+.quiz-feedback{margin-top:1rem;padding:0.82rem 0.95rem;border-radius:5px;font-size:0.85rem;line-height:1.62;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.fb-ok{background:rgba(79,168,151,0.09);border:1px solid var(--teal2);}
+.quiz-feedback.fb-no{background:rgba(192,83,58,0.07);border:1px solid var(--rust);}
+.quiz-fb-lbl{font-family:var(--ff-m);font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:0.3rem;}
+.fb-ok .quiz-fb-lbl{color:var(--teal);}
+.fb-no .quiz-fb-lbl{color:var(--rust);}
+.quiz-fb-txt{color:var(--bone2);}
+.quiz-next-row{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:0.6rem;margin-top:1rem;}
+.quiz-next-btn{background:var(--teal);color:var(--ink);border:none;border-radius:4px;padding:0.72rem 1.4rem;font-family:var(--ff-b);font-weight:600;font-size:0.88rem;cursor:pointer;display:none;}
+.quiz-next-btn.show{display:block;}
+.quiz-next-btn:hover{background:#62c2af;}
+.quiz-streak{font-family:var(--ff-m);font-size:0.72rem;color:var(--bone2);}
+.quiz-score-card{text-align:center;background:var(--stone);border:1px solid var(--line);border-radius:8px;padding:2rem 1.5rem;}
+.quiz-score-n{font-family:var(--ff-d);font-size:4rem;font-weight:700;color:var(--gold);line-height:1;}
+.quiz-score-d{font-family:var(--ff-m);font-size:0.78rem;color:var(--bone2);margin-top:0.2rem;letter-spacing:0.06em;text-transform:uppercase;}
+.quiz-score-msg{font-family:var(--ff-d);font-size:1.15rem;color:var(--bone);margin-top:0.85rem;}
+.quiz-score-sub{font-size:0.86rem;color:var(--bone2);margin-top:0.35rem;}
+#mod-map .map-wrap{margin-top:1.3rem;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#0a1828;}
+#world-svg{display:block;width:100%;height:auto;}
+.civ-pin-g{cursor:pointer;}
+.civ-pin-g:focus-visible circle{stroke:white;stroke-width:3;}
+.civ-pin-g circle{transition:r 0.15s,filter 0.15s;}
+.civ-pin-g:hover circle{filter:brightness(1.4);}
+.civ-pin-g text{pointer-events:none;font-family:'IBM Plex Mono',monospace;font-size:10px;fill:rgba(255,255,255,0.85);display:none;}
+.civ-pin-g:hover text{display:block;}
+.map-legend{display:flex;flex-wrap:wrap;gap:0.45rem 1rem;margin-top:0.9rem;}
+.map-leg{display:flex;align-items:center;gap:0.3rem;font-family:var(--ff-m);font-size:0.62rem;color:var(--bone2);}
+.map-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.map-hint{font-family:var(--ff-m);font-size:0.66rem;color:var(--bone2);opacity:0.6;margin-top:0.5rem;}
+
 #tech-out{display:none;margin-top:1.8rem;}#tech-out.open{display:block;}
 .tech-title{font-family:var(--ff-d);font-size:1.6rem;margin-top:0.28rem;color:var(--bone);}
 .compare-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:0.7rem;margin-top:1.2rem;}
@@ -432,7 +481,7 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
     <div class="nav-controls">
       <button class="nav-icon-btn" id="lang-btn" title="Language / Langue">EN</button>
       <button class="nav-icon-btn" id="theme-btn" aria-label="Toggle theme">&#9788;</button>
-      <div class="nav-v">v3.2</div>
+      <div class="nav-v">v3.3</div>
     </div>
   </div>
 </nav>
@@ -456,7 +505,7 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
     <div class="stats-bar">
       <div class="stat"><span class="stat-n" id="stat-civs">15</span><span class="stat-l">Civilizations</span></div>
       <div class="stat"><span class="stat-n">10</span><span class="stat-l">Tech Domains</span></div>
-      <div class="stat"><span class="stat-n">12</span><span class="stat-l">AI Modules</span></div>
+      <div class="stat"><span class="stat-n">14</span><span class="stat-l">AI Modules</span></div>
       <div class="stat"><span class="stat-n" id="stat-decoded">0</span><span class="stat-l">Decoded</span></div>
     </div>
   </div>
@@ -481,6 +530,8 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
       <button class="tab-btn"        role="tab" aria-selected="false" data-mod="pitch">Pitch</button>
       <button class="tab-btn" role="tab" aria-selected="false" data-mod="heritage">Heritage</button>
       <button class="tab-btn" role="tab" aria-selected="false" data-mod="archive">Archive<span class="tab-ct hidden" id="arc-count">0</span></button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-mod="quiz">Quiz</button>
+      <button class="tab-btn" role="tab" aria-selected="false" data-mod="map">Map</button>
   </div>
 </div>
 
@@ -674,6 +725,87 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
     </div>
   </div>
 </div>
+
+<!-- MODULE 13: QUIZ -->
+<option value="expert">Expert</option>
+        </select>
+      </div>
+      <div class="sp2"><button class="btn-teal" id="quiz-run-btn" disabled type="button">Generate Quiz</button></div>
+    </div>
+    <div id="quiz-out">
+      <div class="strip-sm" aria-hidden="true" style="margin-top:1.4rem;"><div class="sg"></div><div class="sb" id="strip-quiz"></div></div>
+      <div id="quiz-status" aria-live="polite"></div>
+      <div id="quiz-prog" class="prog-wrap" style="display:none;"><div class="prog-label">Generating quiz questions&hellip;</div><div class="prog-track"><div class="prog-bar go" id="quiz-bar"></div></div></div>
+      <div id="quiz-render"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 14: WORLD MAP -->
+
+<!-- MODULE 14: WORLD MAP -->
+<div class="mod-panel hidden" id="mod-map" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 14</p><h2>Civilization World Map</h2><p>All 15 civilizations mapped geographically across 5,500 years. Tap any pin to decode it in the Explorer.</p></div>
+    <div class="map-wrap">
+      <svg id="world-svg" viewBox="0 0 1000 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="World map showing ancient civilization locations">
+        <!-- Ocean -->
+        <rect width="1000" height="500" fill="#0a1828"/>
+        <!-- Grid lines -->
+        <g stroke="#12263a" stroke-width="0.6" opacity="0.7">
+          <line x1="0" y1="250" x2="1000" y2="250"/>
+          <line x1="0" y1="178" x2="1000" y2="178" stroke-dasharray="3,4"/>
+          <line x1="0" y1="322" x2="1000" y2="322" stroke-dasharray="3,4"/>
+          <line x1="83" y1="0" x2="83" y2="500"/><line x1="167" y1="0" x2="167" y2="500"/>
+          <line x1="250" y1="0" x2="250" y2="500"/><line x1="333" y1="0" x2="333" y2="500"/>
+          <line x1="417" y1="0" x2="417" y2="500"/><line x1="500" y1="0" x2="500" y2="500"/>
+          <line x1="583" y1="0" x2="583" y2="500"/><line x1="667" y1="0" x2="667" y2="500"/>
+          <line x1="750" y1="0" x2="750" y2="500"/><line x1="833" y1="0" x2="833" y2="500"/>
+          <line x1="917" y1="0" x2="917" y2="500"/>
+        </g>
+        <!-- Continents (simplified) -->
+        <g fill="#162c18" stroke="#1e3e20" stroke-width="0.8">
+          <!-- North America -->
+          <polygon points="95,48 360,48 370,92 348,160 308,212 268,218 242,188 196,172 156,132 118,82"/>
+          <!-- Greenland -->
+          <polygon points="355,10 432,10 442,42 402,56 358,48"/>
+          <!-- South America -->
+          <polygon points="268,218 406,218 418,262 406,342 378,422 318,444 272,402 256,342 252,272"/>
+          <!-- Europe -->
+          <polygon points="453,46 532,46 547,82 542,132 512,158 474,162 456,142 462,102"/>
+          <!-- British Isles -->
+          <polygon points="466,86 480,80 486,102 474,110 465,100"/>
+          <!-- Scandinavia -->
+          <polygon points="488,46 530,46 530,92 506,102 488,82"/>
+          <!-- Africa -->
+          <polygon points="443,150 658,150 668,202 662,302 640,372 588,432 528,442 478,412 454,352 438,252 440,192"/>
+          <!-- Arabian Peninsula -->
+          <polygon points="546,152 660,152 672,202 660,234 620,242 578,222 554,192"/>
+          <!-- Asia main -->
+          <polygon points="530,46 942,46 962,102 942,172 882,232 802,268 732,262 660,234 620,242 578,222 554,192 546,152 530,82"/>
+          <!-- Indian subcontinent -->
+          <polygon points="622,242 732,242 732,302 702,362 652,362 622,302"/>
+          <!-- SE Asia -->
+          <polygon points="732,242 882,242 882,292 802,302 752,282 732,262"/>
+          <!-- Japan -->
+          <polygon points="868,126 902,116 912,146 892,156 870,146"/>
+          <!-- Australia -->
+          <polygon points="788,326 922,326 936,382 922,432 860,452 808,432 782,382"/>
+          <!-- Iceland -->
+          <polygon points="414,66 448,56 456,76 436,86 416,76"/>
+        </g>
+        <!-- Equator label -->
+        <text x="8" y="247" fill="#2a4a5a" font-family="monospace" font-size="8">EQ</text>
+        <!-- Civ pins populated by JS -->
+        <g id="civ-pins"></g>
+      </svg>
+    </div>
+    <div class="map-legend" id="map-legend"></div>
+    <p class="map-hint">Tap any pin to decode that civilization in the Explorer. Hover for name + era.</p>
+  </div>
+</div>
+
+<!-- MODULE 15: EXPORT STUDIO -->
 
 <!-- MODULE 7: EDUCATION LAB -->
 <div class="mod-panel hidden" id="mod-edu" role="tabpanel">
@@ -1829,7 +1961,7 @@ function applyLang(lang){
   applyLang(curLang);
 })();
 
-/* ===== v3.2 FEATURE SUITE: Swahili + PWA + API + Collaboration ===== */
+/* ===== v3.3 FEATURE SUITE: Swahili + PWA + API + Collaboration ===== */
 function LANG_DIRECTIVE(){
   if(curLang==='sw') return ' IMPORTANT: Write every human-readable string VALUE in Swahili (Kiswahili). CRITICAL: keep all JSON keys exactly as specified in the schema, in English, never translated or renamed. Output ONLY the JSON object, with nothing before or after it.';
   if(curLang==='fr') return ' IMPORTANT: Write every human-readable string VALUE in French. CRITICAL: keep all JSON keys exactly as specified in the schema, in English, never translated or renamed. Output ONLY the JSON object, with nothing before or after it.';
@@ -1898,18 +2030,273 @@ if(chipCollab) chipCollab.addEventListener('click',()=>{
     +(last?'<button class="fm-btn" id="collab-export">\u2193 Download report (.json)</button>':'')
     +(last?'<button class="fm-btn" id="collab-wa">\u2706 Share on WhatsApp</button>':'')
     +(last?'<button class="fm-btn" id="collab-pdf">\u2399 Print / Save as PDF</button>':'')
+    +(last?'<button class="fm-btn" id="collab-md">\u2193 Download report (.md)</button>':'')
+    +(last?'<button class="fm-btn" id="collab-link">\u2697 Copy share link</button>':'')
     +'<button class="fm-btn" id="collab-import">\u2191 Open shared report</button>'
     +'<input type="file" id="collab-file" accept="application/json,.json" style="display:none">');
   if(last){
     document.getElementById('collab-export').onclick=()=>{ const blob=new Blob([JSON.stringify({zhie_report:last.result},null,2)],{type:'application/json'}); const l=document.createElement('a'); l.href=URL.createObjectURL(blob); l.download='zhie-report.json'; l.click(); toast('\u2193 Report downloaded \u2014 send the file to a colleague'); };
     document.getElementById('collab-wa').onclick=()=>{ window.open('https://wa.me/?text='+encodeURIComponent('\u29C7 ZHIE report: '+reportTitle(last.result)+'\n\n'+JSON.stringify(last.result,null,1).slice(0,3500)+'\n\nShared from ZHIE'),'_blank'); };
-    document.getElementById('collab-pdf').onclick=()=>exportPDF(last.result);  }
+    document.getElementById('collab-pdf').onclick=()=>exportPDF(last.result);
+    document.getElementById('collab-md').onclick=()=>{
+      let md='# '+reportTitle(last.result)+' \u2014 ZHIE Report\n\n';
+      for(const [k,v] of Object.entries(last.result||{})){
+        const label=String(k).replace(/_/g,' ');
+        if(typeof v==='string') md+='## '+label+'\n\n'+v+'\n\n';
+        else if(Array.isArray(v)) md+='## '+label+'\n\n'+v.map(it=>'- '+(typeof it==='string'?it:Object.values(it).join(' \u2014 '))).join('\n')+'\n\n';
+        else if(v&&typeof v==='object') md+='## '+label+'\n\n'+Object.entries(v).map(p=>'- '+p[0].replace(/_/g,' ')+': '+(Array.isArray(p[1])?p[1].join(', '):String(p[1]))).join('\n')+'\n\n';
+      }
+      md+='---\n*Generated by ZHIE \u2014 Zynora Historical Intelligence Engine*';
+      const b=new Blob([md],{type:'text/markdown'}); const u=URL.createObjectURL(b);
+      const l=document.createElement('a'); l.href=u; l.download='zhie-report.md'; l.click(); URL.revokeObjectURL(u);
+      toast('\u2193 Markdown downloaded');
+    };
+    document.getElementById('collab-link').onclick=()=>{
+      try{
+        const enc=btoa(unescape(encodeURIComponent(JSON.stringify({t:'r',d:last.result}))));
+        const link=location.href.split('#')[0]+'#zhie='+enc;
+        navigator.clipboard.writeText(link).then(()=>toast('\u2697 Share link copied \u2014 send it to anyone'));
+      }catch(e){ toast('Could not build the link'); }
+    };  }
   const fi=document.getElementById('collab-file');
   document.getElementById('collab-import').onclick=()=>fi.click();
   fi.onchange=()=>{ const f=fi.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ const j=JSON.parse(rd.result); openModal(renderReport(j.zhie_report||j)); }catch(e){ toast('That file is not a valid ZHIE report'); } }; rd.readAsText(f); };
 });
 
-/* ===== v3.2: ANALYSIS HISTORY + PDF EXPORT ===== */
+/* ===== MODULE 13: HISTORICAL KNOWLEDGE QUIZ (ported) ===== */
+/* ===== QUIZ MODULE ===== */
+const quizCivEl=document.getElementById('quiz-civ');
+const quizBtn=document.getElementById('quiz-run-btn');
+quizCivEl.addEventListener('change',()=>{quizBtn.disabled=!quizCivEl.value;});
+
+const SYS_QUIZ='You are a historical knowledge quiz generator. Return ONLY valid JSON, no markdown, no fences. Generate exactly 5 multiple choice questions about the specified ancient civilization. Schema: {"civilization":string,"questions":[{"q":string,"opts":{"A":string,"B":string,"C":string,"D":string},"ans":"A"|"B"|"C"|"D","exp":string},{"q":string,"opts":{"A":string,"B":string,"C":string,"D":string},"ans":"A"|"B"|"C"|"D","exp":string},{"q":string,"opts":{"A":string,"B":string,"C":string,"D":string},"ans":"A"|"B"|"C"|"D","exp":string},{"q":string,"opts":{"A":string,"B":string,"C":string,"D":string},"ans":"A"|"B"|"C"|"D","exp":string},{"q":string,"opts":{"A":string,"B":string,"C":string,"D":string},"ans":"A"|"B"|"C"|"D","exp":string}]} q: the question text. opts: exactly 4 options labelled A-D. ans: the correct letter only. exp: 2 sentences - why correct, and the modern AI relevance. Make them progressively harder: 1-2 easy recall, 3-4 analysis, 5 expert application.';
+
+let quizData=null, quizIdx=0, quizScore=0;
+
+function renderQuizQ(){
+  const render=document.getElementById('quiz-render');
+  if(!render||!quizData) return;
+  const q=quizData.questions[quizIdx];
+  const total=quizData.questions.length;
+  const pct=((quizIdx/total)*100).toFixed(0);
+
+  render.innerHTML='';
+
+  /* progress */
+  const prog=document.createElement('div'); prog.className='quiz-progress';
+  prog.innerHTML='<div class="quiz-prog-bar"><div class="quiz-prog-fill" style="width:'+pct+'%"></div></div>'
+    +'<span class="quiz-prog-txt">'+( quizIdx+1)+' / '+total+'</span>';
+  render.appendChild(prog);
+
+  /* question box */
+  const box=document.createElement('div'); box.className='quiz-q-box';
+  const numEl=document.createElement('div'); numEl.className='quiz-q-num';
+  numEl.textContent='Question '+(quizIdx+1)+' of '+total;
+  const qEl=document.createElement('p'); qEl.className='quiz-q-txt'; qEl.textContent=q.q;
+  box.appendChild(numEl); box.appendChild(qEl);
+
+  /* options */
+  const optsEl=document.createElement('div'); optsEl.className='quiz-opts';
+  ['A','B','C','D'].forEach(letter=>{
+    const btn=document.createElement('button'); btn.className='quiz-opt';
+    btn.innerHTML='<span class="quiz-opt-ltr">'+letter+'</span><span>'+((q.opts||{})[letter]||'')+'</span>';
+    btn.addEventListener('click',()=>answerQuiz(letter,q.ans,q.exp,box));
+    optsEl.appendChild(btn);
+  });
+  box.appendChild(optsEl);
+
+  /* feedback (hidden until answered) */
+  const fb=document.createElement('div'); fb.className='quiz-feedback'; fb.id='quiz-fb';
+  fb.innerHTML='<div class="quiz-fb-lbl" id="quiz-fb-lbl"></div><div class="quiz-fb-txt" id="quiz-fb-txt"></div>';
+  box.appendChild(fb);
+
+  /* next row */
+  const nextRow=document.createElement('div'); nextRow.className='quiz-next-row';
+  const streakEl=document.createElement('span'); streakEl.className='quiz-streak'; streakEl.id='quiz-streak';
+  streakEl.textContent='Score: '+quizScore+'/'+quizIdx;
+  const nextBtn=document.createElement('button'); nextBtn.className='quiz-next-btn'; nextBtn.id='quiz-next-btn';
+  nextBtn.textContent=quizIdx+1<total?'Next Question \u2192':'See Results';
+  nextBtn.addEventListener('click',()=>{
+    quizIdx++;
+    if(quizIdx<(quizData.questions.length)) renderQuizQ();
+    else showQuizResults();
+  });
+  nextRow.appendChild(streakEl); nextRow.appendChild(nextBtn);
+  box.appendChild(nextRow);
+  render.appendChild(box);
+}
+
+function answerQuiz(selected,correct,exp,box){
+  /* disable all options */
+  box.querySelectorAll('.quiz-opt').forEach((btn,i)=>{
+    btn.disabled=true;
+    const letter=['A','B','C','D'][i];
+    if(letter===correct) btn.classList.add('q-correct');
+    else if(letter===selected&&selected!==correct) btn.classList.add('q-wrong');
+  });
+  /* show feedback */
+  const fb=document.getElementById('quiz-fb');
+  const lbl=document.getElementById('quiz-fb-lbl');
+  const ftxt=document.getElementById('quiz-fb-txt');
+  const isCorrect=selected===correct;
+  if(isCorrect){quizScore++; fb.className='quiz-feedback show fb-ok';}
+  else {fb.className='quiz-feedback show fb-no';}
+  if(lbl) lbl.textContent=isCorrect?'\u2713 Correct!':'\u2717 Incorrect \u2014 Answer: '+correct;
+  if(ftxt) ftxt.textContent=exp||'';
+  /* show next button + update streak */
+  const nextBtn=document.getElementById('quiz-next-btn');
+  if(nextBtn) nextBtn.classList.add('show');
+  const streak=document.getElementById('quiz-streak');
+  if(streak) streak.textContent='Score: '+quizScore+'/'+(quizIdx+1);
+}
+
+function showQuizResults(){
+  const render=document.getElementById('quiz-render');
+  if(!render||!quizData) return;
+  const total=quizData.questions.length;
+  const pct=Math.round((quizScore/total)*100);
+  const msgs=['Keep exploring!','Good start!','Solid knowledge!','Impressive!','History master!'];
+  const msgIdx=Math.min(Math.floor(pct/20),4);
+  render.innerHTML='';
+  const card=document.createElement('div'); card.className='quiz-score-card frag';
+  card.innerHTML='<div class="quiz-score-n">'+quizScore+'</div>'
+    +'<div class="quiz-score-d">out of '+total+' correct \u2014 '+pct+'%</div>'
+    +'<div class="quiz-score-msg">'+msgs[msgIdx]+'</div>'
+    +'<p class="quiz-score-sub">'+quizData.civilization+'</p>'
+    +'<div class="quiz-actions">'
+    +'<button class="btn-teal" id="quiz-again-btn">Play Again</button>'
+    +'<button class="btn-outline-teal" id="quiz-decode-btn">Decode this civ</button>'
+    +'</div>';
+  render.appendChild(card);
+  document.getElementById('quiz-again-btn').addEventListener('click',()=>{
+    quizIdx=0; quizScore=0; renderQuizQ();
+  });
+  document.getElementById('quiz-decode-btn').addEventListener('click',()=>{
+    switchTab('explorer');
+    const civ=quizData.civilization;
+    const preset_key=Object.keys(PRESET).find(k=>PRESET[k].civilization.toLowerCase().includes(civ.split(' ')[0].toLowerCase()));
+    if(preset_key){
+      const card=document.querySelector('.civ-card[data-cid="'+preset_key+'"]');
+      if(card){card.scrollIntoView({behavior:'smooth',block:'center'});card.click();return;}
+    }
+    runDecode(civ,null);
+  });
+  toast('\u29C7 Quiz complete! '+quizScore+'/'+total);
+}
+
+quizBtn.addEventListener('click',async()=>{
+  const civ=quizCivEl.value;
+  const diff=document.getElementById('quiz-diff').value;
+  if(!civ) return;
+  quizBtn.disabled=true;
+  const out=document.getElementById('quiz-out'); out.classList.add('open');
+  const stEl=document.getElementById('quiz-status');
+  const pEl=document.getElementById('quiz-prog'),bEl=document.getElementById('quiz-bar');
+  const render=document.getElementById('quiz-render');
+  const strEl=document.getElementById('strip-quiz');
+  stEl.innerHTML=''; render.innerHTML='';
+  if(strEl) strEl.textContent=rndBin(120);
+  showProg(pEl,bEl);
+  out.scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const prompt=civ+(diff&&diff!=='mixed'?', difficulty: '+diff:'');
+    const result=await callClaude(SYS_QUIZ,prompt);
+    hideProg(pEl,bEl); stEl.innerHTML='';
+    quizData=result; quizIdx=0; quizScore=0;
+    renderQuizQ();
+    toast('\u29C7 5 questions generated for '+civ);
+  }catch(err){
+    hideProg(pEl,bEl);
+    const d=document.createElement('div'); d.className='err-msg'; d.textContent='Quiz generation failed. ';
+    const b=document.createElement('button'); b.className='btn-retry'; b.textContent='Try again';
+    b.addEventListener('click',()=>quizBtn.click()); d.appendChild(b); stEl.appendChild(d);
+  }
+  quizBtn.disabled=false;
+});
+
+/* ===== MODULE 14: WORLD MAP (ported) ===== */
+/* ===== MODULE 14: WORLD MAP ===== */
+const MAP_CIVS=[
+  {id:'egypt',      name:'Ancient Egypt',       era:'c. 3100\u201330 BCE',      lat:26, lon:31,   color:'#C99A56', region:'africa'},
+  {id:'mesopotamia',name:'Mesopotamia',          era:'c. 3500\u2013539 BCE',     lat:33, lon:44,   color:'#C0533A', region:'mideast'},
+  {id:'indus',      name:'Indus Valley',         era:'c. 3300\u20131300 BCE',    lat:25, lon:68,   color:'#5B8DB8', region:'southasia'},
+  {id:'greece',     name:'Ancient Greece',       era:'c. 800\u2013146 BCE',      lat:38, lon:23,   color:'#4FA897', region:'europe'},
+  {id:'rome',       name:'Ancient Rome',         era:'c. 753 BCE\u2013476 CE',   lat:42, lon:12,   color:'#4FA897', region:'europe'},
+  {id:'persia',     name:'Achaemenid Persia',    era:'550\u2013330 BCE',         lat:32, lon:53,   color:'#C0533A', region:'mideast'},
+  {id:'china',      name:'Imperial China',       era:'206 BCE\u2013907 CE',      lat:35, lon:105,  color:'#7BA05B', region:'asia'},
+  {id:'khmer',      name:'Khmer Empire',         era:'802\u20131431 CE',         lat:13, lon:104,  color:'#7BA05B', region:'asia'},
+  {id:'maya',       name:'Maya Civilization',    era:'c. 2000 BCE\u20131500 CE', lat:17, lon:-90,  color:'#9580C8', region:'americas'},
+  {id:'aztec',      name:'Aztec Empire',         era:'1300\u20131521 CE',        lat:19, lon:-99,  color:'#9580C8', region:'americas'},
+  {id:'inca',       name:'Inca Empire',          era:'1438\u20131533 CE',        lat:-13,lon:-72,  color:'#9580C8', region:'americas'},
+  {id:'benin',      name:'Kingdom of Benin',     era:'c. 1180\u20131897 CE',     lat:6,  lon:5,    color:'#C99A56', region:'africa'},
+  {id:'mali',       name:'Mali Empire',          era:'c. 1235\u20131600 CE',     lat:12, lon:-8,   color:'#C99A56', region:'africa'},
+  {id:'zimbabwe',   name:'Great Zimbabwe',       era:'c. 1100\u20131450 CE',     lat:-20,lon:31,   color:'#C99A56', region:'africa'},
+  {id:'axum',       name:'Aksumite Empire',      era:'c. 100\u2013960 CE',       lat:14, lon:38,   color:'#C99A56', region:'africa'}
+];
+const MAP_REGION_COLORS={africa:'#C99A56',americas:'#9580C8',europe:'#4FA897',mideast:'#C0533A',southasia:'#5B8DB8',asia:'#7BA05B'};
+const MAP_REGION_LABELS={africa:'Africa',americas:'Americas',europe:'Europe & Med',mideast:'Middle East',southasia:'South Asia',asia:'East & SE Asia'};
+
+let mapBuilt=false;
+function buildMap(){
+  if(mapBuilt) return; mapBuilt=true;
+  const pinsG=document.getElementById('civ-pins');
+  const legendEl=document.getElementById('map-legend');
+  if(!pinsG) return;
+  const SVG_NS='http://www.w3.org/2000/svg';
+  const W=1000, H=500;
+  function lonlat(lon,lat){return {x:((lon+180)/360*W).toFixed(1), y:((90-lat)/180*H).toFixed(1)};}
+
+  MAP_CIVS.forEach(civ=>{
+    const {x,y}=lonlat(civ.lon,civ.lat);
+    const g=document.createElementNS(SVG_NS,'g');
+    g.setAttribute('class','civ-pin-g');
+    g.setAttribute('tabindex','0');
+    g.setAttribute('role','button');
+    g.setAttribute('aria-label',civ.name+' ('+civ.era+') \u2014 tap to decode');
+
+    const pulse=document.createElementNS(SVG_NS,'circle');
+    pulse.setAttribute('cx',x); pulse.setAttribute('cy',y);
+    pulse.setAttribute('r','14'); pulse.setAttribute('fill',civ.color); pulse.setAttribute('opacity','0.18');
+
+    const c=document.createElementNS(SVG_NS,'circle');
+    c.setAttribute('cx',x); c.setAttribute('cy',y);
+    c.setAttribute('r','7'); c.setAttribute('fill',civ.color);
+    c.setAttribute('stroke','rgba(255,255,255,0.45)'); c.setAttribute('stroke-width','1.5');
+
+    const lbl=document.createElementNS(SVG_NS,'text');
+    lbl.setAttribute('x',x); lbl.setAttribute('y',String(parseFloat(y)-10));
+    lbl.setAttribute('text-anchor','middle'); lbl.textContent=civ.name;
+
+    const title=document.createElementNS(SVG_NS,'title');
+    title.textContent=civ.name+' \u2022 '+civ.era;
+
+    g.appendChild(title); g.appendChild(pulse); g.appendChild(c); g.appendChild(lbl);
+
+    function openCiv(){
+      switchTab('explorer');
+      const card=document.querySelector('.civ-card[data-cid="'+civ.id+'"]');
+      if(card){card.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>card.click(),300);}
+      else runDecode(civ.name,null);
+    }
+    g.addEventListener('click',openCiv);
+    g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openCiv();}});
+    pinsG.appendChild(g);
+  });
+
+  // Legend
+  const seenR=new Set();
+  MAP_CIVS.forEach(c=>{
+    if(seenR.has(c.region)) return; seenR.add(c.region);
+    const item=document.createElement('div'); item.className='map-leg';
+    const dot=document.createElement('div'); dot.className='map-leg-dot';
+    dot.style.background=MAP_REGION_COLORS[c.region];
+    const lbl=document.createElement('span'); lbl.textContent=MAP_REGION_LABELS[c.region]||c.region;
+    item.appendChild(dot); item.appendChild(lbl); legendEl.appendChild(item);
+  });
+}
+document.querySelectorAll('.tab-btn[data-mod="map"]').forEach(b=>b.addEventListener('click',buildMap,{once:false}));
+
+/* ===== v3.3: ANALYSIS HISTORY + PDF EXPORT ===== */
 function getHistory(){ try{ return JSON.parse(localStorage.getItem('zhie_history')||'[]'); }catch(e){ return []; } }
 function fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
 const chipHist=document.getElementById('chip-hist');
@@ -1947,6 +2334,19 @@ function exportPDF(report){
   setTimeout(()=>{ w.focus(); w.print(); },300);
   toast('Print dialog open \u2014 choose \u201cSave as PDF\u201d');
 }
+
+/* ===== SHARED-LINK IMPORT ===== */
+(function(){
+  try{
+    const m=location.hash.match(/^#zhie=(.+)$/);
+    if(!m) return;
+    const j=JSON.parse(decodeURIComponent(escape(atob(m[1]))));
+    const rep=(j&&j.d)?j.d:j;
+    history.replaceState(null,'',location.pathname+location.search);
+    setTimeout(()=>openModal(renderReport(rep)),700);
+    toast('\u29C7 Shared report opened');
+  }catch(e){}
+})();
 
 /* ===== INTRO STRIP ===== */
 (function(){
