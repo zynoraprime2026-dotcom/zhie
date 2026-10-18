@@ -992,7 +992,7 @@ function arcRender(){
 async function callClaude(system,userMsg){
   const res=await fetch('https://noor-api-zynora1.vercel.app/api/ai/chat',{
     method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({system:system+LANG_DIRECTIVE(),messages:[{role:'user',content:userMsg}],maxTokens:2400})
+    body:JSON.stringify({system:system+LANG_DIRECTIVE(),messages:[{role:'user',content:userMsg}],maxTokens:4000})
   });
   if(!res.ok) throw new Error('HTTP '+res.status);
   const data=await res.json();
