@@ -173,6 +173,17 @@ nav .inner{width:100%;max-width:1100px;margin:0 auto;padding:0 1.25rem;display:f
 .chip:hover{border-color:var(--gold2);color:var(--bone);}
 .chip.sel{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600;}
 .chip:focus-visible{outline:2px solid var(--teal);outline-offset:2px;}
+.intro-strip{background:linear-gradient(90deg,rgba(212,162,74,0.10),rgba(79,168,151,0.08));border-bottom:1px solid var(--line);}
+.intro-strip .wrap{display:flex;align-items:center;gap:1rem;padding:0.7rem 1.2rem;flex-wrap:wrap;}
+.intro-steps{display:flex;gap:1.4rem;flex-wrap:wrap;flex:1;}
+.intro-step{display:flex;align-items:center;gap:0.5rem;font-family:var(--ff-m);font-size:0.72rem;color:var(--bone2);letter-spacing:0.03em;}
+.intro-n{display:inline-flex;align-items:center;justify-content:center;width:1.35rem;height:1.35rem;border-radius:50%;background:var(--gold);color:var(--ink);font-weight:700;font-size:0.68rem;flex:none;}
+.intro-x{background:none;border:1px solid var(--line);border-radius:4px;color:var(--bone2);font-size:0.9rem;line-height:1;padding:0.35rem 0.55rem;cursor:pointer;flex:none;}
+.intro-x:hover{border-color:var(--gold2);color:var(--bone);}
+.hist-item{display:flex;justify-content:space-between;align-items:center;gap:0.8rem;border:1px solid var(--line);border-radius:6px;padding:0.65rem 0.85rem;margin-bottom:0.55rem;cursor:pointer;transition:border-color 0.12s;}
+.hist-item:hover{border-color:var(--gold2);}
+.hist-t{font-family:var(--ff-m);font-size:0.78rem;color:var(--bone);}
+.hist-d{font-family:var(--ff-m);font-size:0.66rem;color:var(--bone2);margin-top:0.15rem;}
 #tech-out{display:none;margin-top:1.8rem;}#tech-out.open{display:block;}
 .tech-title{font-family:var(--ff-d);font-size:1.6rem;margin-top:0.28rem;color:var(--bone);}
 .compare-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr));gap:0.7rem;margin-top:1.2rem;}
@@ -421,11 +432,21 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
     <div class="nav-controls">
       <button class="nav-icon-btn" id="lang-btn" title="Language / Langue">EN</button>
       <button class="nav-icon-btn" id="theme-btn" aria-label="Toggle theme">&#9788;</button>
-      <div class="nav-v">v3.1</div>
+      <div class="nav-v">v3.2</div>
     </div>
   </div>
 </nav>
 
+<section class="intro-strip" id="intro-strip" hidden>
+  <div class="wrap">
+    <div class="intro-steps">
+      <span class="intro-step"><span class="intro-n">1</span> Pick a module below</span>
+      <span class="intro-step"><span class="intro-n">2</span> Tap Decode — the AI excavates history</span>
+      <span class="intro-step"><span class="intro-n">3</span> Export the report, or send it to a colleague</span>
+    </div>
+    <button class="intro-x" id="intro-x" aria-label="Dismiss">×</button>
+  </div>
+</section>
 <section class="hero">
   <div class="wrap">
     <h1>Every ancient civilization<br>already solved <em>this</em> problem once.</h1>
@@ -859,6 +880,7 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
           <button type="button" id="chip-off">Offline Mode (PWA)</button>
           <button type="button" id="chip-api">API Access</button>
           <button type="button" id="chip-collab">Collaboration Mode</button>
+          <button type="button" id="chip-hist">Analysis History</button>
         </div>
       </div>
     </div>
@@ -1009,6 +1031,11 @@ async function callClaude(system,userMsg){
   if(!parsed&&arguments.length<3) return callClaude(system,userMsg,1);
   if(!parsed) throw new Error('Invalid JSON');
   window.ZHIE_LAST={result:parsed,user:userMsg};
+  try{
+    const hist=JSON.parse(localStorage.getItem('zhie_history')||'[]');
+    hist.unshift({ts:Date.now(),q:userMsg.slice(0,120),r:parsed});
+    localStorage.setItem('zhie_history',JSON.stringify(hist.slice(0,20)));
+  }catch(e){}
   return parsed;
 }
 
@@ -1802,7 +1829,7 @@ function applyLang(lang){
   applyLang(curLang);
 })();
 
-/* ===== v3.1 FEATURE SUITE: Swahili + PWA + API + Collaboration ===== */
+/* ===== v3.2 FEATURE SUITE: Swahili + PWA + API + Collaboration ===== */
 function LANG_DIRECTIVE(){
   if(curLang==='sw') return ' IMPORTANT: Write every human-readable string VALUE in Swahili (Kiswahili). CRITICAL: keep all JSON keys exactly as specified in the schema, in English, never translated or renamed. Output ONLY the JSON object, with nothing before or after it.';
   if(curLang==='fr') return ' IMPORTANT: Write every human-readable string VALUE in French. CRITICAL: keep all JSON keys exactly as specified in the schema, in English, never translated or renamed. Output ONLY the JSON object, with nothing before or after it.';
@@ -1870,16 +1897,64 @@ if(chipCollab) chipCollab.addEventListener('click',()=>{
       : '<p class="fm-txt">Run any analysis first to export it, or open a report file someone shared with you.</p>')
     +(last?'<button class="fm-btn" id="collab-export">\u2193 Download report (.json)</button>':'')
     +(last?'<button class="fm-btn" id="collab-wa">\u2706 Share on WhatsApp</button>':'')
+    +(last?'<button class="fm-btn" id="collab-pdf">\u2399 Print / Save as PDF</button>':'')
     +'<button class="fm-btn" id="collab-import">\u2191 Open shared report</button>'
     +'<input type="file" id="collab-file" accept="application/json,.json" style="display:none">');
   if(last){
     document.getElementById('collab-export').onclick=()=>{ const blob=new Blob([JSON.stringify({zhie_report:last.result},null,2)],{type:'application/json'}); const l=document.createElement('a'); l.href=URL.createObjectURL(blob); l.download='zhie-report.json'; l.click(); toast('\u2193 Report downloaded \u2014 send the file to a colleague'); };
     document.getElementById('collab-wa').onclick=()=>{ window.open('https://wa.me/?text='+encodeURIComponent('\u29C7 ZHIE report: '+reportTitle(last.result)+'\n\n'+JSON.stringify(last.result,null,1).slice(0,3500)+'\n\nShared from ZHIE'),'_blank'); };
-  }
+    document.getElementById('collab-pdf').onclick=()=>exportPDF(last.result);  }
   const fi=document.getElementById('collab-file');
   document.getElementById('collab-import').onclick=()=>fi.click();
   fi.onchange=()=>{ const f=fi.files[0]; if(!f) return; const rd=new FileReader(); rd.onload=()=>{ try{ const j=JSON.parse(rd.result); openModal(renderReport(j.zhie_report||j)); }catch(e){ toast('That file is not a valid ZHIE report'); } }; rd.readAsText(f); };
 });
+
+/* ===== v3.2: ANALYSIS HISTORY + PDF EXPORT ===== */
+function getHistory(){ try{ return JSON.parse(localStorage.getItem('zhie_history')||'[]'); }catch(e){ return []; } }
+function fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString()+' '+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+const chipHist=document.getElementById('chip-hist');
+if(chipHist) chipHist.addEventListener('click',()=>{
+  const hist=getHistory();
+  let h='<h3 class="fm-title">Analysis History</h3>';
+  if(!hist.length){ h+='<p class="fm-txt">No saved analyses yet. Run any module \u2014 your last 20 reports will be kept here, even after closing the app.</p>'; }
+  else{
+    h+='<p class="fm-txt">'+hist.length+' saved report'+(hist.length>1?'s':'')+' on this device. Tap one to reopen it.</p>';
+    hist.forEach((e,i)=>{ h+='<div class="hist-item" data-i="'+i+'"><div><div class="hist-t">'+reportTitle(e.r)+'</div><div class="hist-d">'+fmtDate(e.ts)+' \u00b7 '+String(e.q||'').slice(0,80)+'</div></div><div class="hist-d">\u29C7</div></div>'; });
+    h+='<button class="fm-btn" id="hist-clear" style="margin-top:0.7rem;">\u00d7 Clear history</button>';
+  }
+  openModal(h);
+  document.querySelectorAll('.hist-item').forEach(el=>{ el.addEventListener('click',()=>{ const e=getHistory()[parseInt(el.dataset.i,10)]; if(e) openModal(renderReport(e.r)); }); });
+  const hc=document.getElementById('hist-clear');
+  if(hc) hc.onclick=()=>{ localStorage.removeItem('zhie_history'); toast('History cleared'); };
+});
+function reportHTML(r){
+  let h='<h1 style="margin:0 0 4px;">'+reportTitle(r)+'</h1>';
+  h+='<p style="color:#666;margin:0 0 18px;">ZHIE \u2014 Zynora Historical Intelligence Engine</p>';
+  for(const entry of Object.entries(r||{})){
+    const k=entry[0], v=entry[1];
+    const label=String(k).replace(/_/g,' ');
+    if(typeof v==='string') h+='<h2 style="margin:14px 0 4px;font-size:15px;">'+label+'</h2><p style="margin:0;">'+v+'</p>';
+    else if(Array.isArray(v)) h+='<h2 style="margin:14px 0 4px;font-size:15px;">'+label+'</h2><ul style="margin:0;padding-left:18px;">'+v.map(it=>'<li>'+(typeof it==='string'?it:(it&&typeof it==='object'?Object.values(it).join(' \u2014 '):String(it)))+'</li>').join('')+'</ul>';
+    else if(v&&typeof v==='object') h+='<h2 style="margin:14px 0 4px;font-size:15px;">'+label+'</h2><p style="margin:0;">'+Object.entries(v).map(p=>p[0].replace(/_/g,' ')+': '+(Array.isArray(p[1])?p[1].join(', '):String(p[1]))).join('<br>')+'</p>';
+  }
+  return h;
+}
+function exportPDF(report){
+  const w=window.open('','_blank');
+  if(!w){ toast('Allow pop-ups to export the PDF'); return; }
+  w.document.write('<!doctype html><html><head><title>ZHIE report</title><meta charset="utf-8"></head><body style="font-family:Georgia,serif;max-width:720px;margin:24px auto;color:#111;">'+reportHTML(report)+'</body></html>');
+  w.document.close();
+  setTimeout(()=>{ w.focus(); w.print(); },300);
+  toast('Print dialog open \u2014 choose \u201cSave as PDF\u201d');
+}
+
+/* ===== INTRO STRIP ===== */
+(function(){
+  const strip=document.getElementById('intro-strip'), x=document.getElementById('intro-x');
+  if(!strip) return;
+  if(localStorage.getItem('zhie_intro_dismissed')!=='1') strip.hidden=false;
+  if(x) x.addEventListener('click',()=>{ strip.hidden=true; localStorage.setItem('zhie_intro_dismissed','1'); });
+})();
 
 /* ===== SHARE ROW ===== */
 function showShareFor(report){
