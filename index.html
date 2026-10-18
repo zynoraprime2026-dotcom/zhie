@@ -727,7 +727,26 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
 </div>
 
 <!-- MODULE 13: QUIZ -->
-<option value="expert">Expert</option>
+<div class="mod-panel hidden" id="mod-quiz" role="tabpanel">
+  <div class="wrap">
+    <div class="sec-head"><p class="eyebrow">Module 13</p><h2>Historical Knowledge Quiz</h2><p>ZHIE generates 5 questions about any civilization &mdash; from easy to expert. Answer interactively, get scored, and see explanations tied to modern AI.</p></div>
+    <div class="city-form" style="margin-top:1.4rem;">
+      <div class="fg"><label for="quiz-civ">Civilization</label>
+        <select id="quiz-civ"><option value="">Select a civilization...</option>
+          <option>Ancient Egypt</option><option>Ancient Rome</option><option>Kingdom of Benin</option>
+          <option>Mali Empire</option><option>Maya Civilization</option><option>Ancient Greece</option>
+          <option>Imperial China (Han-Tang)</option><option>Inca Empire</option>
+          <option>Achaemenid Persia</option><option>Mesopotamia (Sumer/Babylon)</option>
+          <option>Indus Valley</option><option>Khmer Empire</option>
+          <option>Aztec Empire</option><option>Great Zimbabwe</option><option>Aksumite Empire</option></select>
+      </div>
+      <div class="fg"><label for="quiz-diff">Difficulty</label>
+        <select id="quiz-diff">
+          <option value="mixed">Mixed &mdash; Easy to Expert</option>
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+          <option value="expert">Expert</option>
         </select>
       </div>
       <div class="sp2"><button class="btn-teal" id="quiz-run-btn" disabled type="button">Generate Quiz</button></div>
@@ -740,8 +759,6 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
     </div>
   </div>
 </div>
-
-<!-- MODULE 14: WORLD MAP -->
 
 <!-- MODULE 14: WORLD MAP -->
 <div class="mod-panel hidden" id="mod-map" role="tabpanel">
@@ -804,8 +821,6 @@ footer{border-top:1px solid var(--line);padding:2rem 0 2.8rem;margin-top:1rem;}
     <p class="map-hint">Tap any pin to decode that civilization in the Explorer. Hover for name + era.</p>
   </div>
 </div>
-
-<!-- MODULE 15: EXPORT STUDIO -->
 
 <!-- MODULE 7: EDUCATION LAB -->
 <div class="mod-panel hidden" id="mod-edu" role="tabpanel">
