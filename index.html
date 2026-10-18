@@ -991,7 +991,7 @@ function arcRender(){
 /* ============ CLAUDE API ============ */
 async function callClaude(system,userMsg){
   const res=await fetch('https://noor-api-zynora1.vercel.app/api/ai/chat',{
-    method:'POST',headers:{'Content-Type':'application/json'},
+    method:'POST',headers:{'Content-Type':'application/json','x-api-key':'zhie_f9ae86f52d92b4f63e41c2d345d7c035'},
     body:JSON.stringify({system:system+LANG_DIRECTIVE(),messages:[{role:'user',content:userMsg}],maxTokens:4000})
   });
   if(!res.ok) throw new Error('HTTP '+res.status);
@@ -1829,7 +1829,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator
 const chipApi=document.getElementById('chip-api');
 if(chipApi) chipApi.addEventListener('click',()=>{
   const ep='https://noor-api-zynora1.vercel.app/api/ai/chat';
-  const curl="curl -X POST "+ep+" \\\n  -H 'Content-Type: application/json' \\\n  -d '{\"system\":\"You are a historical technology analysis engine. Return ONLY valid JSON\",\"messages\":[{\"role\":\"user\",\"content\":\"Construction\"}],\"maxTokens\":1600}'";
+  const curl="curl -X POST "+ep+" \\\n  -H 'Content-Type: application/json' \\\n  -H 'x-api-key: zhie_f9ae86f52d92b4f63e41c2d345d7c035' \\\n  -d '{\"system\":\"You are a historical technology analysis engine. Return ONLY valid JSON\",\"messages\":[{\"role\":\"user\",\"content\":\"Construction\"}],\"maxTokens\":1600}'";
   openModal('<h3 class="fm-title">ZHIE API Access</h3>'
     +'<p class="fm-txt">Every ZHIE analysis is a single POST \u2014 build your own tools on top of it. Replace the system prompt with any of ZHIE\u2019s analysis schemas (Explorer, Tech, Cities, Sustain, Business, Heritage, Pitch) and parse the JSON reply.</p>'
     +'<div class="fm-code">POST '+ep+'</div>'
@@ -1838,7 +1838,7 @@ if(chipApi) chipApi.addEventListener('click',()=>{
     +'<button class="fm-btn" id="fm-copy">Copy curl example</button>'
     +'<button class="fm-btn" id="fm-doc">Download API docs</button>');
   document.getElementById('fm-copy').onclick=()=>{ navigator.clipboard.writeText(curl.replace(/\\n/g,'\n')); toast('Copied \u2014 paste in any terminal'); };
-  document.getElementById('fm-doc').onclick=()=>{ const blob=new Blob(["ZHIE API\n======\n\nEndpoint: POST "+ep+"\n\nRequest:  {system, messages, maxTokens}\nResponse: {text: <JSON string>}\n\nThe system prompt is the analysis engine instruction (any ZHIE module schema).\nFree during beta; verify AI reports against primary sources.\n"],{type:'text/plain'}); const l=document.createElement('a'); l.href=URL.createObjectURL(blob); l.download='zhie-api.txt'; l.click(); };
+  document.getElementById('fm-doc').onclick=()=>{ const blob=new Blob(["ZHIE API\n======\n\nEndpoint: POST "+ep+"\n\nRequest:  {system, messages, maxTokens}\nHeaders:  x-api-key: <your api key> (required)\nResponse: {text: <JSON string>}\n\nThe system prompt is the analysis engine instruction (any ZHIE module schema).\nFree during beta; verify AI reports against primary sources.\n"],{type:'text/plain'}); const l=document.createElement('a'); l.href=URL.createObjectURL(blob); l.download='zhie-api.txt'; l.click(); };
 });
 
 const chipCollab=document.getElementById('chip-collab');
