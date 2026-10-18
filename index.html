@@ -991,7 +991,7 @@ function arcRender(){
 /* ============ CLAUDE API ============ */
 async function callClaude(system,userMsg){
   const res=await fetch('https://noor-api-zynora1.vercel.app/api/ai/chat',{
-    method:'POST',headers:{'Content-Type':'application/json','x-api-key':'zhie_f9ae86f52d92b4f63e41c2d345d7c035'},
+    method:'POST',headers:{'Content-Type':'application/json','x-api-key':'zhie_f2d2977e26d8b69d853a0b5265c78e58'},
     body:JSON.stringify({system:system+LANG_DIRECTIVE(),messages:[{role:'user',content:userMsg}],maxTokens:4000})
   });
   if(!res.ok) throw new Error('HTTP '+res.status);
@@ -1000,8 +1000,9 @@ async function callClaude(system,userMsg){
   if(!tb) throw new Error('No text block');
   let parsed=null;
   const raw=tb.text.trim();
-  try{ parsed=JSON.parse(raw); }catch(e){
-    const t=raw.replace(/```json/gi,'').replace(/```/g,'');
+  const fixQ=t=>t.replace(/[\u201C\u201D]/g,'"').replace(/[\u2018\u2019]/g,"'");
+  try{ parsed=JSON.parse(fixQ(raw)); }catch(e){
+    const t=fixQ(raw.replace(/```json/gi,'').replace(/```/g,''));
     const s=t.indexOf('{'), z=t.lastIndexOf('}');
     if(s!==-1&&z>s){ try{ parsed=JSON.parse(t.slice(s,z+1)); }catch(e2){ parsed=null; } }
   }
@@ -1829,7 +1830,7 @@ if('serviceWorker' in navigator){ window.addEventListener('load',()=>{ navigator
 const chipApi=document.getElementById('chip-api');
 if(chipApi) chipApi.addEventListener('click',()=>{
   const ep='https://noor-api-zynora1.vercel.app/api/ai/chat';
-  const curl="curl -X POST "+ep+" \\\n  -H 'Content-Type: application/json' \\\n  -H 'x-api-key: zhie_f9ae86f52d92b4f63e41c2d345d7c035' \\\n  -d '{\"system\":\"You are a historical technology analysis engine. Return ONLY valid JSON\",\"messages\":[{\"role\":\"user\",\"content\":\"Construction\"}],\"maxTokens\":1600}'";
+  const curl="curl -X POST "+ep+" \\\n  -H 'Content-Type: application/json' \\\n  -H 'x-api-key: zhie_f2d2977e26d8b69d853a0b5265c78e58' \\\n  -d '{\"system\":\"You are a historical technology analysis engine. Return ONLY valid JSON\",\"messages\":[{\"role\":\"user\",\"content\":\"Construction\"}],\"maxTokens\":1600}'";
   openModal('<h3 class="fm-title">ZHIE API Access</h3>'
     +'<p class="fm-txt">Every ZHIE analysis is a single POST \u2014 build your own tools on top of it. Replace the system prompt with any of ZHIE\u2019s analysis schemas (Explorer, Tech, Cities, Sustain, Business, Heritage, Pitch) and parse the JSON reply.</p>'
     +'<div class="fm-code">POST '+ep+'</div>'
