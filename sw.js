@@ -1,5 +1,5 @@
 // ZHIE service worker — offline mode (PWA)
-const CACHE = 'zhie-v1';
+const CACHE = 'zhie-v3.3';
 const ASSETS = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 
 self.addEventListener('install', (e) => {
